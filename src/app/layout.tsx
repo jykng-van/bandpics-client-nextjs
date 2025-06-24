@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+//import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
+/* const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
@@ -10,7 +10,7 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
+}); */
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,10 +24,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <title>Band Pics</title>
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="antialiased min-h-screen py-8 px-4 gap-4 grid grid-rows-[auto_1fr_auto]"
       >
-        {children}
+        <header className=""><h1 className="font-bold text-xl">Live Show Pictures</h1></header>
+        <main className="items-center font-[family-name:var(--font-geist-sans)]">
+          {children}
+        </main>
+        <footer>{`${(new Date().getFullYear())}`}</footer>
       </body>
     </html>
   );
