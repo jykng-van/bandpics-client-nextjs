@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LoginIcon from '@mui/icons-material/Login';
 //import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -32,7 +33,7 @@ export default function RootLayout({
       <body
         className="antialiased min-h-screen py-8 px-4 gap-4 grid grid-rows-[auto_1fr_auto]"
       >
-        <header className=""><h1 className="font-bold text-xl">Live Show Pictures</h1></header>
+        <header className=""><strong className="font-bold text-xl">Live Show Pictures</strong><LoginIcon /></header>
         <main className="items-center font-[family-name:var(--font-geist-sans)]">
           {children}
         </main>

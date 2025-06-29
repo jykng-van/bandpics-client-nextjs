@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Loading from "@/app/loading";
 import EventImages from "./event_images";
+import EditIcon from '@mui/icons-material/Edit';
 
 //use group ids for now
 export default async function EventPage({
@@ -26,6 +27,7 @@ export default async function EventPage({
   return (
     <div>
       <Suspense fallback={<Loading />}>
+        <button><EditIcon></EditIcon></button>
         <h2 className="font-bold text-lg">{group.name}</h2>
         {group.description &&
           <p>{group.description}</p>

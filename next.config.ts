@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
   images: {
     domains: [process.env.CLOUDFRONT_DOMAIN || 'localhost'],
 
-  }
+  },
+  experimental: {
+    testProxy: true,
+  },
 };
 
 export default nextConfig;

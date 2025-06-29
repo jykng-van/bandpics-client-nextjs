@@ -8,9 +8,9 @@ export default function ListCollections({
 }: {
     groups: Promise<ImageGroup[]>
 }){
-    console.log(groups);
+    //console.log(groups);
     const allGroups = use(groups);
-
+    console.log(allGroups);
 
     return(
         <ul>
