@@ -8,6 +8,11 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    environment: TEST
+    env:
+      IMAGE_API_URL: ${{IMAGE_API_URL}}
+      CLOUDFRONT_DOMAIN: ${{CLOUDFRONT_DOMAIN}}
+      CLOUDFRONT_URL: ${{CLOUDFRONT_URL}}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
