@@ -18,7 +18,7 @@ test('has mock image groups', async ({ page, next }) => {
         // If the request is not lambda, abort it
         return "abort";
     });
-    await page.goto('http://localhost:3000/');
+    await page.goto('/');
 
     // Expect there to be a H1
     await expect(page.getByRole('heading', {level:1})).toBeVisible();
