@@ -42,7 +42,6 @@ test('load images and fullsize dialog works', async ({ page, next }) => {
     await page.goto(`/events/${test_group}`);
 
     // Expect a thumbnail of the image to exist
-    //src="/_next/image?url=https%3A%2F%2Fdfu4as9cakali.cloudfront.net%2Fthumb%2F6849d0ab40e464dfc69fe1dd%2FPXL_20250421_044206492.jpg&amp;w=640&amp;q=75">
     const thumb_path = encodeURIComponent(`thumb/${test_group}/${test_filename}`);
     await expect(page.locator(`img[src*="${thumb_path}"]`)).toBeVisible();
 
