@@ -3,13 +3,13 @@
 import Image from "next/image";
 
 export default function ImageCollection({
-    images, groupId, urlPath, clickCallback
+    images, groupId, clickCallback
 }: {
     images: ImageData[] | null,
     groupId: string,
-    urlPath: string,
     clickCallback: (image:ImageData)=>void
 }){
+    const urlPath = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
     function thumb_url(filename: string): string {
         return `${urlPath}/thumb/${groupId}/${filename}`;
     }

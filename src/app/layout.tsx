@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import LoginIcon from '@mui/icons-material/Login';
 //import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import Providers from "./components/providers";
+import MainHeader from "./components/main_header";
 /* const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -33,11 +33,15 @@ export default function RootLayout({
       <body
         className="antialiased min-h-screen py-8 px-4 gap-4 grid grid-rows-[auto_1fr_auto]"
       >
-        <header className=""><strong className="font-bold text-xl">Live Show Pictures</strong><LoginIcon /></header>
-        <main className="items-center font-[family-name:var(--font-geist-sans)]">
-          {children}
-        </main>
-        <footer>{`${(new Date().getFullYear())}`}</footer>
+        <Providers>
+          <MainHeader />
+
+
+          <main className="items-center font-[family-name:var(--font-geist-sans)]">
+              {children}
+          </main>
+          <footer>{`${(new Date().getFullYear())}`}</footer>
+        </Providers>
       </body>
     </html>
   );

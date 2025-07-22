@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Loading from "@/app/loading";
 import EventImages from "./event_images";
-import EditIcon from '@mui/icons-material/Edit';
+
 
 //use group ids for now
 export default async function EventPage({
@@ -10,7 +10,6 @@ export default async function EventPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const cloudfront = process.env.CLOUDFRONT_URL || 'http://localhost';
   const image_api = process.env.IMAGE_API_URL;
 
   async function getImages(groupId: string) : Promise<ImageGroup>{
@@ -23,16 +22,16 @@ export default async function EventPage({
 
   const promise_group = getImages(id);
   const group = await promise_group;
+  //const session = useSession();
 
   return (
     <div>
       <Suspense fallback={<Loading />}>
-        <button><EditIcon></EditIcon></button>
-        <h2 className="font-bold text-lg">{group.name}</h2>
-        {group.description &&
+        <h2 className="font-bold text-lg">{group?.name}</h2>
+        {group?.description &&
           <p>{group.description}</p>
         }
-        <EventImages cloudfront_url={cloudfront} group={promise_group} />
+        <EventImages group={promise_group} />
       </Suspense>
 
     </div>

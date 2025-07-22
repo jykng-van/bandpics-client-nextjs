@@ -1,8 +1,8 @@
 //import Image from "next/image";
 import ListCollections from "./list_collections";
+import AddGroup from "./components/add_group";
 import { Suspense } from "react";
 import Loading from "./loading";
-
 
 export default async function Home() {
   function get_image_groups() : Promise<ImageGroup[]>{
@@ -14,11 +14,14 @@ export default async function Home() {
   }
 
   const imageGroups = get_image_groups();
+
   //const imageGroups = await data.json();
   //console.log(imageGroups);
   return (
     <div className="">
       <h1>Image Groups</h1>
+      <AddGroup />
+
       <Suspense fallback={<Loading />}>
         <ListCollections groups={imageGroups} />
       </Suspense>

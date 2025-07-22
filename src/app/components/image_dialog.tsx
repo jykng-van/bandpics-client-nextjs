@@ -5,14 +5,14 @@ import { useEffect } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function ImageDialog({
-    image, urlPath, groupId, //closed = false
+    image, groupId, //closed = false
 }:
 {
     image: ImageData | null,
-    urlPath:string,
     groupId: string,
     //closed?: boolean
 }){
+    const urlPath = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
     function closeDialog(){
         const dialog = document.querySelector('#image-dialog');
         if (dialog && dialog instanceof HTMLDialogElement){
