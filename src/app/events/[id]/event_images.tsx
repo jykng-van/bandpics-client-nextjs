@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, use } from 'react';
+import { useState } from 'react';
 import { useSession } from "next-auth/react";
 import ImageCollection from '@/app/components/image_collection';
 import ImageDialog from '@/app/components/image_dialog';
@@ -8,12 +8,14 @@ import ImageGroupForm from '@/app/image_groups/group_form';
 import EditIcon from '@mui/icons-material/Edit';
 
 export default function EventImages({
-    group,
+    imageGroup,
 }:{
-    group:Promise<ImageGroup>,
+    //group:Promise<ImageGroup>,
+    imageGroup:ImageGroup,
 }){
     const [currentImage, setCurrentImage] = useState<ImageData | null>(null);
-    const imageGroup = use(group);
+    //const imageGroup = use(group);
+
     const session = useSession();
     console.log(session);
     function change_current_image(image:ImageData):void{

@@ -9,9 +9,9 @@ const handler = NextAuth({
     // Configure one or more authentication providers
     providers: [
         CognitoProvider({
-        clientId: process.env.COGNITO_CLIENT_ID as string,
-        clientSecret: process.env.COGNITO_CLIENT_SECRET as string,
-        issuer: issuer,
+            clientId: process.env.COGNITO_CLIENT_ID as string,
+            clientSecret: process.env.COGNITO_CLIENT_SECRET as string,
+            issuer: issuer,
         }),
     ],
     callbacks: {
@@ -43,70 +43,3 @@ const handler = NextAuth({
 
 export { handler as GET, handler as POST };
 
-/* import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { CognitoIdentityProviderClient, InitiateAuthCommand, AuthFlowType, RespondToAuthChallengeCommand } from '@aws-sdk/client-cognito-identity-provider';
-import { createHmac } from 'crypto';
-
-//import process from 'process';
-
-
-
-const handler = NextAuth({
-    providers: [
-        CredentialsProvider({
-            name: "Credentials",
-            credentials: {
-                username: { label: "Username", type: "text", placeholder: "Username" },
-                password: { label: "Password", type: "password" }
-            },
-
-            authorize: async (credentials) => {
-                // Initialize Cognito
-                const cognito = new CognitoIdentityProviderClient({ region: process.env.COGNITO_REGION});
-
-                if (!credentials) return null;
-
-
-                // Create SECRET_HASH for cognito authentication
-                const hasher = createHmac('sha256', process.env.COGNITO_CLIENT_SECRET as string); // create HMAC hasher with client secret
-                hasher.update(credentials.username + process.env.COGNITO_CLIENT_ID); //combine username and client ID for hashing
-                const secret_hash = hasher.digest('base64'); // get base64 encoded hash
-
-                const params = new InitiateAuthCommand({
-                    AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
-                    AuthParameters: {
-                        USERNAME: credentials.username,
-                        PASSWORD: credentials.password,
-                        SECRET_HASH: secret_hash,
-                    },
-                    ClientId: process.env.COGNITO_CLIENT_ID as string,
-                });
-
-                try {
-                    const response = await cognito.send(params);
-                    console.log(response);
-
-                    if (response.ChallengeName === 'NEW_PASSWORD_REQUIRED'){ //new password required
-
-
-                    }
-
-
-                    const user = {
-                        id: response.ChallengeParameters?.USER_ID_FOR_SRP as string, // User ID for Secure Remote Password
-                        name: credentials.username,
-                        challengeName: response.ChallengeName,
-                    };
-                    console.log(user);
-                    return user;
-                } catch (error) {
-                    console.error(error);
-                    return null;
-                }
-            }
-        })
-    ]
-})
-
-export { handler as GET, handler as POST } */

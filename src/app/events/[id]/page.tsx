@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Loading from "@/app/loading";
 import EventImages from "./event_images";
-
+import { GetImageGroup } from '@/app/lib/group_actions';
 
 //use group ids for now
 export default async function EventPage({
@@ -10,7 +10,7 @@ export default async function EventPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const image_api = process.env.IMAGE_API_URL;
+  /* const image_api = process.env.IMAGE_API_URL;
 
   async function getImages(groupId: string) : Promise<ImageGroup>{
     return fetch(`${image_api}/image_groups/${groupId}`)
@@ -20,7 +20,8 @@ export default async function EventPage({
       });
   }
 
-  const promise_group = getImages(id);
+  const promise_group = getImages(id); */
+  const promise_group = GetImageGroup(id);
   const group = await promise_group;
   //const session = useSession();
 
@@ -31,7 +32,7 @@ export default async function EventPage({
         {group?.description &&
           <p>{group.description}</p>
         }
-        <EventImages group={promise_group} />
+        <EventImages imageGroup={group} />
       </Suspense>
 
     </div>
