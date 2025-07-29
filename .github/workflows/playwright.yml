@@ -11,8 +11,8 @@ jobs:
     environment: TEST
     env:
       IMAGE_API_URL: ${{secrets.IMAGE_API_URL}}
+      NEXT_PUBLIC_IMAGE_API_URL: ${{secrets.IMAGE_API_URL}}
       CLOUDFRONT_DOMAIN: ${{secrets.CLOUDFRONT_DOMAIN}}
-      CLOUDFRONT_URL: ${{secrets.CLOUDFRONT_URL}}
       NEXT_PUBLIC_CLOUDFRONT_URL: https://${{secrets.CLOUDFRONT_DOMAIN}}
       COGNITO_REGION: ${{vars.COGNITO_REGION}}
       AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
