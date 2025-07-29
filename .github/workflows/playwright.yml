@@ -13,6 +13,14 @@ jobs:
       IMAGE_API_URL: ${{secrets.IMAGE_API_URL}}
       CLOUDFRONT_DOMAIN: ${{secrets.CLOUDFRONT_DOMAIN}}
       CLOUDFRONT_URL: ${{secrets.CLOUDFRONT_URL}}
+      NEXT_PUBLIC_CLOUDFRONT_URL: ${{secrets.NEXT_PUBLIC_CLOUDFRONT_URL}}
+      COGNITO_REGION: ${{vars.COGNITO_REGION}}
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+      COGNITO_CLIENT_ID: ${{secrets.COGNITO_CLIENT_ID}}
+      COGNITO_CLIENT_SECRET: ${{secrets.COGNITO_CLIENT_SECRET}}
+      USER_POOL_ID: ${{secrets.USER_POOL_ID}}
+      NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4

@@ -7,7 +7,7 @@ import HighlightOffTwoToneIcon from '@mui/icons-material/HighlightOffTwoTone';
 
 
 export default function ImageGroupForm({group}:{group?: ImageGroup}) {
-    console.log(group);
+    console.log('group', group);
     const api_url = process.env.NEXT_PUBLIC_IMAGE_API_URL;
     const [images, setImages] = useState<File[]>([]); //preview images to upload
     console.log('api_url', process.env.NEXT_PUBLIC_IMAGE_API_URL);

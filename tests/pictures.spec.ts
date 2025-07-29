@@ -47,7 +47,7 @@ test('load images and fullsize dialog works', async ({ page, next }) => {
 
     // Expect fullsize image to open
     await page.locator(`a[href*="fullsize/${test_group}/${test_filename}"]`).click();
-    await expect(page.locator('dialog')).toBeVisible();
+    await expect(page.locator('dialog#image-dialog')).toBeVisible();
     const fullsize_path = encodeURIComponent(`fullsize/${test_group}/${test_filename}`);
     await expect(page.locator(`img[src*="${fullsize_path}"]`)).toBeVisible();
 });
