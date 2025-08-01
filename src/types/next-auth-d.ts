@@ -9,11 +9,13 @@ declare module "next-auth" {
       /** Oauth access token */
       accessToken?: string;
       refreshToken?: string;
-      id?: string
+      idToken?: string;
+      id?: string;
     } & DefaultSession["user"];
   }
   interface JWT {
     accessToken?: string;
     refreshToken?: string;
+    idToken?: string;
   }
 }

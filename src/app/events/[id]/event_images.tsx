@@ -18,7 +18,7 @@ export default function EventImages({
 
     const session = useSession();
     console.log(session);
-    function change_current_image(image:ImageData):void{
+    const change_current_image = (image:ImageData):void =>{
         setCurrentImage(image);
     }
     console.log(imageGroup);

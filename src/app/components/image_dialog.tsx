@@ -13,7 +13,7 @@ export default function ImageDialog({
     //closed?: boolean
 }){
     const urlPath = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
-    function closeDialog(){
+    const closeDialog = ()=>{
         const dialog = document.querySelector('#image-dialog');
         if (dialog && dialog instanceof HTMLDialogElement){
             dialog.close();
@@ -31,7 +31,7 @@ export default function ImageDialog({
     console.log(image);
 
     return (
-    <dialog id="image-dialog" className="m-5 rounded-sm  backdrop:bg-black/50 backdrop:backdrop-blur-sm">
+    <dialog id="image-dialog" className="m-5 rounded-sm backdrop:bg-black/50 backdrop:backdrop-blur-sm">
         <button className="btn absolute top-2 right-5 bg-sky-300 p-1 rounded-full inline-block" onClick={closeDialog} title="Close"><CloseIcon sx={{color:'white'}} /></button>
         {image &&
         <div className="p-2">

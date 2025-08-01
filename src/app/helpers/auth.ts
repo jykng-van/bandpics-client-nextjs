@@ -26,6 +26,7 @@ export const config = {
             // Send properties to the client, like an access_token and user id from a provider.
             session.user.accessToken = token.accessToken as string;
             session.user.refreshToken = token.refreshToken as string;
+            session.user.idToken = token.idToken as string;
             session.user.id = token.sub;
 
             return session
@@ -38,6 +39,7 @@ export const config = {
             if (account) {
                 token.accessToken = account.access_token;
                 token.refreshToken = account.refresh_token;
+                token.idToken = account.id_token;
                 //token.id = token.sub;
             }
             return token
@@ -52,7 +54,7 @@ export function auth(
     | [NextApiRequest, NextApiResponse]
     | []
 ) {
-    console.log('auth', args);
-    console.log('auth_options?', config);
+    /* console.log('auth', args);
+    console.log('auth_options?', config); */
   return getServerSession(...args, config)
 }

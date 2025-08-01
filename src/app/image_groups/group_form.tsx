@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { UpdateImageGroup, RevalidateGroup } from "@/app/lib/group_actions";
 import HighlightOffTwoToneIcon from '@mui/icons-material/HighlightOffTwoTone';
+import { useSession } from "next-auth/react";
 
 
 export default function ImageGroupForm({group}:{group?: ImageGroup}) {
@@ -11,9 +12,9 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
     const api_url = process.env.NEXT_PUBLIC_IMAGE_API_URL;
     const [images, setImages] = useState<File[]>([]); //preview images to upload
     console.log('api_url', process.env.NEXT_PUBLIC_IMAGE_API_URL);
+    const session = useSession();
 
-
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
@@ -33,52 +34,50 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
         })
     }
     //prepare images to upload, the response sends back presigned urls
-    async function prepareImages(id: string){
+    const prepareImages = async (id: string)=>{
+        console.log('prepareImages, ID:',id);
         const image_list : string[] = images.map((file)=> file.name);
-        fetch(`${api_url}/images/${id}/`,
+        fetch(`${api_url}/images/${id}`,
             {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.data?.user?.accessToken}`
                 },
                 body: JSON.stringify({images: image_list})
             }
         ).then(async (res) => {
-            if (res.ok){
-                const res_data = await res.json();
-                console.log('Upload response:', res_data);
+            const res_data = await res.json();
+            console.log('Upload response:', res_data);
 
-                const uploads: Promise<Response>[] = res_data.added_images.map(
-                    (image: {presigned_url : string, type: string}, index: number) => fetch(image.presigned_url, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': image.type
-                        },
-                        body: images[index], //file to upload
-                    }).catch((err)=>{
-                        console.error('Error uploading image:', err);
-                        return Promise.reject(err);
-                    }))
+            const uploads: Promise<Response>[] = res_data.added_images.map(
+                (image: {presigned_url : string, type: string}, index: number) => fetch(image.presigned_url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': image.type
+                    },
+                    body: images[index], //file to upload
+                }).catch((err)=>{
+                    console.error('Error uploading image:', err);
+                    return Promise.reject(err);
+                }))
 
-                console.log('Uploads', uploads);
-                Promise.all(uploads).then((res) => {
-                    console.log('All uploads results', res);
-                    if (res.every((r) => r.ok)) {
-                        console.log('All image uploads successful');
-                        setTimeout(()=>{
-                            RevalidateGroup(); //revalidate group to show new images
-                            setImages([]); //clear images from preview
-                        }, 1500); // wait for resizing
-                    }
-                }).catch((err) => {
-                    console.error('Error uploading images:', err);
-                });
-            } else {
-                throw new Error('Failed to prepare image uploads');
-            }
+            console.log('Uploads', uploads);
+            Promise.all(uploads).then((res) => {
+                console.log('All uploads results', res);
+                if (res.every((r) => r.ok)) {
+                    console.log('All image uploads successful');
+                    setTimeout(()=>{
+                        RevalidateGroup(); //revalidate group to show new images
+                        setImages([]); //clear images from preview
+                    }, 1500); // wait for resizing
+                }
+            }).catch((err) => {
+                console.error('Error uploading images:', err);
+            });
         })
     }
-    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
         console.log('File change event');
         if (event.target.files && event.target.files.length > 0){
             const files = event.target.files;
@@ -88,7 +87,7 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
             }
         }
     }
-    function handleDrop(event: React.DragEvent<HTMLDivElement>){
+    const handleDrop = (event: React.DragEvent<HTMLDivElement>) =>{
         console.log('Drop event');
         event.preventDefault();
         if (event.dataTransfer.files && event.dataTransfer.files.length){
@@ -100,7 +99,7 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
         }
     }
 
-    function handleRemoveImage(index: number){
+    const handleRemoveImage = (index: number)=>{
         setImages((prevImages) => {
             return prevImages.filter((img, i) => i !== index); //remove at index
         });

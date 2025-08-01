@@ -1,5 +1,7 @@
 'use server'
 import { revalidateTag } from "next/cache";
+import { auth } from "@/app/helpers/auth";
+//import { HttpError } from "@/types/http_error";
 
 const image_api = process.env.IMAGE_API_URL;
 
@@ -16,6 +18,7 @@ export const GetImageGroup = async function (groupId: string) : Promise<ImageGro
 }
 export const UpdateImageGroup = async function (formData: FormData, group?: ImageGroup){
     //const is_new_group = formData.get('id') == ''; //if it's a new group
+    const session = await auth();
     const is_new_group = !group; //if it's a new group
     console.log('is new group', is_new_group);
 
@@ -35,6 +38,7 @@ export const UpdateImageGroup = async function (formData: FormData, group?: Imag
             method: is_new_group ? 'POST' : 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session?.user.accessToken}`,
             },
             body: JSON.stringify(group_data),
         }
