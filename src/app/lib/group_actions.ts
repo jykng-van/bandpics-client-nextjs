@@ -46,7 +46,18 @@ export const UpdateImageGroup = async function (formData: FormData, group?: Imag
     const result = await response.json();
     return result;
 }
-export const RevalidateGroup = async function(){
+export const GetAllGroups = async ()=>{
+    return fetch(`${image_api}/image_groups`, {
+        next:{
+            tags:['image_groups']
+        }
+    })
+    .then((res) => res.json())
+    .catch((err) => {
+        console.error('Error getting groups.', err);
+    });
+}
+export const RevalidateGroup = async ()=>{
     console.log('Revalidate group!');
     revalidateTag('group');
 }

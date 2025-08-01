@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import Loading from "./loading";
 
 export default async function Home() {
-  function get_image_groups() : Promise<ImageGroup[]>{
+  const get_image_groups = () : Promise<ImageGroup[]> =>{
     return fetch(`${process.env.IMAGE_API_URL}/image_groups`)
       .then((res) => res.json())
       .catch((err) => {

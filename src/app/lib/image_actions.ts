@@ -32,4 +32,27 @@ export const DeleteImage = async (image_id: string) => {
         }
     })
 }
-//export const EditImage = async ()
+export const EditImage = async (image_id:string, data:{description:string, group:string}) =>{
+    const session = await auth();
+
+    await fetch(`${api_url}/images/${image_id}`,{
+        method: 'PATCH',
+        headers: {
+            'Authorization':`Bearer ${session?.user.accessToken}`
+        },
+        next:{
+            tags:['image']
+        },
+        body:JSON.stringify(data)
+    }).then((res)=>{
+        console.log('THEN', res);
+        if (res.ok){
+            revalidateTag('image');
+            return JSON.stringify(res.json());
+        }else{
+            const error = new HttpError(res.statusText, res.status);
+            return Promise.reject(error);
+            //return {error:res.statusText}
+        }
+    })
+}

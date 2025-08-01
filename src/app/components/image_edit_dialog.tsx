@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import UploadIcon from '@mui/icons-material/Upload';
+import { GetAllGroups } from "@/app/lib/group_actions";
 
 export const ImageEditDialog = (
     {imageData, groupId, closeEdit }:{imageData:ImageData, groupId:string, closeEdit: () => void}
@@ -12,13 +13,25 @@ export const ImageEditDialog = (
     const urlPath = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
     const editDialog = useRef<HTMLDialogElement>(null);
 
-
+    const [imageGroups, setImageGroups] = useState<ImageGroup[]>([]);
     const [newImage, setNewImage] = useState<File | null>(null);
 
     const img_url = (filename: string): string => {
         return `${urlPath}/fullsize/${groupId}/${filename}`;
     }
     const [previewImage, setPreviewImage] = useState<string>(img_url(imageData.filename));
+
+    useEffect(()=>{
+        const initGroups = async()=>{
+            try{
+                setImageGroups(await GetAllGroups());
+            }catch(err){
+                console.error(err);
+            }
+        }
+        initGroups();
+
+    },[]);
 
     useEffect(()=>{
         if (editDialog && editDialog.current){
@@ -51,6 +64,8 @@ export const ImageEditDialog = (
 
     const handleSaveImage = (event: React.FormEvent<HTMLFormElement>)=>{
         event.preventDefault();
+        const edit_data = new FormData(event.currentTarget);
+        console.log(edit_data);
     }
 
 
@@ -64,15 +79,24 @@ export const ImageEditDialog = (
                 <Image src={previewImage} alt={imageData.filename} width={800} height={600} className="object-contain" />
             </div>
 
-            <div className="mt-4">
-                <label className="font-bold text-white bg-blue-800 p-2 inline-block" htmlFor="file-replacer"><UploadIcon /> Replace Image</label>
-                <input className="invisible size-0" type="file" id="file-replacer" name="images" multiple accept="image/jpg, image/jpeg" onChange={handleReplaceFile} />
-            </div>
+            <section className="grid mt-4 grid-cols-2 grid-rows-2 w-full gap-3 p-3">
+                <div className="row-span-2 flex flex-col">
+                    <label htmlFor="image-description" className="font-bold block">Description</label>
+                    <textarea id="image-description" name="description" className="border border-gray-500 rounded-xs flex-1" defaultValue={imageData.description}></textarea>
+                </div>
+                <div className="">
+                    <label className="font-bold text-white bg-blue-800 p-2 inline-block" htmlFor="file-replacer"><UploadIcon /> Replace Image</label>
+                    <input className="invisible size-0" type="file" id="file-replacer" multiple accept="image/jpg, image/jpeg" onChange={handleReplaceFile} />
+                </div>
 
-            <div className="w-full">
-                <label htmlFor="image-description" className="font-bold block">Description</label>
-                <textarea id="image-description" className="border border-gray-500 rounded-xs w-full h-[3em]" defaultValue={imageData.description}></textarea>
-            </div>
+                <div>
+                    <label htmlFor="image-group" className="font-bold block">Image Group</label>
+                    <select id="image-group" name="group">
+                        {imageGroups.map(g=>(<option value={g.id} key={g.id}>{g.name}</option>))}
+                    </select>
+                </div>
+            </section>
+
 
             <div className="flex flex-row gap-4 justify-center">
                 <button className="font-bold text-white bg-gray-800 p-2 inline-block rounded-sm" type="button" onClick={closeEdit}>Cancel</button>

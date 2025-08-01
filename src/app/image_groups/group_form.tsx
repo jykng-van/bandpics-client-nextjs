@@ -109,11 +109,11 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
         <form onSubmit={handleSubmit}>
             <div className="mb-3">
                 <label className="font-bold block" htmlFor="groupName">Name</label>
-                <input className="border border-gray-500 rounded-xs" type="text" id="groupName" name="name" defaultValue={group?.name} />
+                <input className="border border-gray-500 rounded-xs w-full" type="text" id="groupName" name="name" defaultValue={group?.name} />
             </div>
             <div className="mb-3">
                 <label className="font-bold block" htmlFor="groupDescription">Description</label>
-                <textarea className="border border-gray-500 rounded-xs" id="groupDescription" name="description" defaultValue={group?.description}></textarea>
+                <textarea className="border border-gray-500 rounded-xs w-full" id="groupDescription" name="description" defaultValue={group?.description}></textarea>
             </div>
             <div className="border-3 border-dashed border-gray-500 rounded p-3 mb-3">
                 <div id="preview-images" className="flex flex-wrap gap-2 flex-row">
