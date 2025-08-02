@@ -3,16 +3,21 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import UploadIcon from '@mui/icons-material/Upload';
-import { GetAllGroups } from "@/app/lib/group_actions";
+import { GetAllGroups, RevalidateGroup } from "@/app/lib/group_actions";
+import { UpdateImage } from "@/app/lib/image_actions";
+import { useSession } from "next-auth/react";
 
 export const ImageEditDialog = (
     {imageData, groupId, closeEdit }:{imageData:ImageData, groupId:string, closeEdit: () => void}
 )=>{
     console.log('image edit', imageData);
+    const api_url = process.env.NEXT_PUBLIC_IMAGE_API_URL;
+    const session = useSession();
 
     const urlPath = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
     const editDialog = useRef<HTMLDialogElement>(null);
 
+    const [selectedGroup, setSelectedGroup] = useState<string>(groupId);
     const [imageGroups, setImageGroups] = useState<ImageGroup[]>([]);
     const [newImage, setNewImage] = useState<File | null>(null);
 
@@ -65,7 +70,66 @@ export const ImageEditDialog = (
     const handleSaveImage = (event: React.FormEvent<HTMLFormElement>)=>{
         event.preventDefault();
         const edit_data = new FormData(event.currentTarget);
+        console.log(selectedGroup, groupId);
+        if (selectedGroup===groupId){
+            edit_data.delete('group');
+        }
         console.log(edit_data);
+        UpdateImage(imageData.id, edit_data).then((res_data)=>{
+            console.log('UpdateImage results', res_data);
+            if (newImage != null){
+                const path = `${api_url}/images/${imageData.id}/file`;
+                console.log('Replacing image!', path);
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.data?.user?.accessToken}`
+                };
+                const body = JSON.stringify({image: newImage.name});
+                console.log(headers);
+                console.log(body);
+                fetch(path,
+                    {
+                        method: 'PATCH',
+                        headers,
+                        body
+                    }
+                ).then(async (res) => {
+                    const res_data = await res.json();
+                    console.log('Upload response:', res_data);
+
+                    fetch(res_data.presigned_url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': res_data.type
+                        },
+                        body: newImage, //file to upload
+                    })
+                    .then(async res=>{
+                        if (res.ok){
+                            console.log('image replaced')
+                            setTimeout(()=>{
+                                RevalidateGroup(); //revalidate group to show new images
+                                closeEdit(); //close the edit preview
+                            }, 1500); // wait for resizing
+                        }else{
+                            console.error('Error uploading image:', {...res, body:await res.json()});
+                        }
+                    })
+                    .catch((err)=>{
+                        console.error('Error uploading image:', err);
+                        return Promise.reject(err);
+                    })
+                }).catch((err)=>{
+                    console.error('Error getting presigned url', err);
+                })
+            }else{
+                closeEdit(); //close the edit preview
+            }
+        }).catch((err)=>{
+            console.error("Image not saved", err);
+        });
+
+
     }
 
 
@@ -91,7 +155,7 @@ export const ImageEditDialog = (
 
                 <div>
                     <label htmlFor="image-group" className="font-bold block">Image Group</label>
-                    <select id="image-group" name="group">
+                    <select id="image-group" name="group" value={selectedGroup} onChange={(e)=>setSelectedGroup(e.target.value)}>
                         {imageGroups.map(g=>(<option value={g.id} key={g.id}>{g.name}</option>))}
                     </select>
                 </div>

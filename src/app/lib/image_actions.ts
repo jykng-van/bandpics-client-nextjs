@@ -28,31 +28,41 @@ export const DeleteImage = async (image_id: string) => {
         }else{
             const error = new HttpError(res.statusText, res.status);
             return Promise.reject(error);
-            //return {error:res.statusText}
         }
-    })
+    }).catch((err) => {
+        console.error('Error deleting image.', err);
+    });
 }
-export const EditImage = async (image_id:string, data:{description:string, group:string}) =>{
+export const UpdateImage = async (image_id:string, form_data:FormData) =>{
     const session = await auth();
-
-    await fetch(`${api_url}/images/${image_id}`,{
+    const data = {data: Object.fromEntries(form_data)};
+    console.log(image_id);
+    console.log(JSON.stringify(data));
+    console.log(`Bearer ${session?.user.accessToken}`);
+    return fetch(`${api_url}/images/${image_id}`,{
         method: 'PATCH',
         headers: {
-            'Authorization':`Bearer ${session?.user.accessToken}`
+            'Authorization':`Bearer ${session?.user.accessToken}`,
+            'Content-Type': 'application/json',
         },
         next:{
-            tags:['image']
+            tags:['image','group']
         },
         body:JSON.stringify(data)
-    }).then((res)=>{
+    }).then(async (res)=>{
         console.log('THEN', res);
+        const res_data = await res.json();
         if (res.ok){
-            revalidateTag('image');
-            return JSON.stringify(res.json());
+            //revalidateTag('image');
+            //return JSON.stringify(res.json());
+            revalidateTag('group');
+            return Promise.resolve(res_data);
         }else{
-            const error = new HttpError(res.statusText, res.status);
+            const error = new HttpError(res.statusText, res.status, res_data);
+            console.error(res_data);
             return Promise.reject(error);
-            //return {error:res.statusText}
         }
-    })
+    }).catch((err) => {
+        console.error('Error updating image.', err);
+    });
 }
