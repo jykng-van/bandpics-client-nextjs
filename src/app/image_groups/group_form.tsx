@@ -18,18 +18,31 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
+        console.log('formData', formData);
+        console.log('images', images);
+
         formData.delete('images'); //remove image from form data, handled separately
+        if (!group){
+            images.forEach(image=>{
+                formData.append('images[]', image.name);
+            });
+        }
+        console.log('formData', formData);
         UpdateImageGroup(formData, group)
         .then(async (group_data) => {
 
             console.log('Group data:', group_data);
-
-            //get images
-            if (images.length > 0){
-                prepareImages(group_data.id);
+            if (group){
+                //get images
+                if (images.length > 0){
+                    prepareImages(group_data.id);
+                }else{
+                    //location.href = `/events/${res_data.id}`; //redirect or reload the page so that we see the changes
+                    await RevalidateGroup();
+                }
             }else{
-                //location.href = `/events/${res_data.id}`; //redirect or reload the page so that we see the changes
-                await RevalidateGroup();
+                uploadToPresigned(group_data.images, group_data.group_id);
+                //location.href = `/events/${group_data.id}`; //redirect or reload the page so that we see the changes
             }
         })
     }
@@ -50,32 +63,41 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
             const res_data = await res.json();
             console.log('Upload response:', res_data);
 
-            const uploads: Promise<Response>[] = res_data.added_images.map(
-                (image: {presigned_url : string, type: string}, index: number) => fetch(image.presigned_url, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': image.type
-                    },
-                    body: images[index], //file to upload
-                }).catch((err)=>{
-                    console.error('Error uploading image:', err);
-                    return Promise.reject(err);
-                }))
+            uploadToPresigned(res_data.added_images);
+        })
+    }
+    const uploadToPresigned = (presigned_urls:{presigned_url : string, type: string}[], group_id?:string)=>{
+        console.log('uploadToPresigned', presigned_urls);
+        const uploads: Promise<Response>[] = presigned_urls.map(
+            (image: {presigned_url : string, type: string}, index: number) => fetch(image.presigned_url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': image.type
+                },
+                body: images[index], //file to upload
+            }).catch((err)=>{
+                console.error('Error uploading image:', err);
+                return Promise.reject(err);
+            }))
 
-            console.log('Uploads', uploads);
-            Promise.all(uploads).then((res) => {
-                console.log('All uploads results', res);
-                if (res.every((r) => r.ok)) {
-                    console.log('All image uploads successful');
-                    setTimeout(()=>{
+        console.log('Uploads', uploads);
+        Promise.all(uploads).then((res) => {
+            console.log('All uploads results', res);
+            if (res.every((r) => r.ok)) {
+                console.log('All image uploads successful');
+                setTimeout(()=>{
+                    if (group){
                         RevalidateGroup(); //revalidate group to show new images
                         setImages([]); //clear images from preview
-                    }, 1500); // wait for resizing
-                }
-            }).catch((err) => {
-                console.error('Error uploading images:', err);
-            });
-        })
+                    }else{
+                        location.href = `/events/${group_id}`; //redirect or reload the page so that we see the changes
+                    }
+
+                }, 1500); // wait for resizing
+            }
+        }).catch((err) => {
+            console.error('Error uploading images:', err);
+        });
     }
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
         console.log('File change event');
@@ -115,6 +137,7 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
                 <label className="font-bold block" htmlFor="groupDescription">Description</label>
                 <textarea className="border border-gray-500 rounded-xs w-full" id="groupDescription" name="description" defaultValue={group?.description}></textarea>
             </div>
+
             <div className="border-3 border-dashed border-gray-500 rounded p-3 mb-3">
                 <div id="preview-images" className="flex flex-wrap gap-2 flex-row">
                     {images.map((file, index)=>
@@ -137,7 +160,6 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
                     <label className="font-bold text-white bg-blue-800 p-2 inline-block" htmlFor="file-picker">Click Here</label>
                     <input className="invisible size-0" type="file" id="file-picker" name="images" multiple accept="image/jpg, image/jpeg" onChange={handleFileChange} />
                 </div>
-
             </div>
             <button className="font-bold text-white bg-blue-800 p-2 inline-block rounded-sm" type="submit">Save</button>
         </form>

@@ -96,7 +96,8 @@ export const config = {
                     return {
                         ...token,
                         accessToken: refreshedTokens.access_token,
-                        accessTokenExpires: refreshedTokens.expires_at * 1000,
+                        //accessTokenExpires: refreshedTokens.expires_at * 1000,
+                        accessTokenExpires: Date.now() + (refreshedTokens.expires_id as number) * 1000,
                         refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Use new refresh token if available
                     };
                 } else {

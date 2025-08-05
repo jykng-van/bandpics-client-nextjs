@@ -23,17 +23,23 @@ export const UpdateImageGroup = async (formData: FormData, group?: ImageGroup)=>
     console.log('is new group', is_new_group);
 
     //data to send
+    console.log('formData', formData);
     const group_data = {
         group:{
             name: formData.get('name') as string,
-            description: formData.get('description') as string
+            description: formData.get('description') as string,
+            images:is_new_group ? formData.getAll('images[]') : [],
         }
     };
+
     console.log('group data', group_data);
-    const id = group?.id || '';
+    const id = group?.id;
+
+    const url = `${image_api}/image_groups` + (!is_new_group ? `/${id}`:'');
+    console.log('url', url);
 
     const response = await fetch(
-        `${image_api}/image_groups/${id}`,
+        url,
         {
             method: is_new_group ? 'POST' : 'PATCH',
             headers: {
@@ -44,6 +50,7 @@ export const UpdateImageGroup = async (formData: FormData, group?: ImageGroup)=>
         }
     )
     const result = await response.json();
+    console.log(result);
     if (response.ok){
         return result;
     }else{
