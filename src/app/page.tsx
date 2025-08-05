@@ -1,5 +1,5 @@
 //import Image from "next/image";
-import ListCollections from "./list_collections";
+import {ListCollections} from "./list_collections";
 import AddGroup from "./components/add_group";
 import { Suspense } from "react";
 import Loading from "./loading";

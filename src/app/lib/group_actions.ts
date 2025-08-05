@@ -79,6 +79,35 @@ export const GetAllGroups = async ()=>{
         console.error('Error getting groups.', err);
     });
 }
+export const DeleteImageGroup = async (groupId: string) =>{
+    console.log('DELETE IMAGEGROUP');
+    const session = await auth();
+    console.log(session);
+    console.log(`Bearer ${session?.user.accessToken}`);
+
+    return fetch(`${image_api}/image_groups/${groupId}`, {
+        method:'DELETE',
+        headers: {
+            'Authorization':`Bearer ${session?.user.accessToken}`
+        },
+        next:{
+            tags:['group']
+        }
+    })
+      .then((res) => {
+        console.log('THEN', res);
+        if (res.ok){
+            revalidateTag('group');
+            return JSON.stringify(res.json());
+        }else{
+            const error = new HttpError(res.statusText, res.status);
+            return Promise.reject(error);
+        }
+      })
+      .catch((err) => {
+        console.error('Error deleting image group,', err);
+      });
+}
 export const RevalidateGroup = async ()=>{
     console.log('Revalidate group!');
     revalidateTag('group');
