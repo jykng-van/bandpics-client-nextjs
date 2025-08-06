@@ -94,13 +94,14 @@ export const DeleteImageGroup = async (groupId: string) =>{
             tags:['group']
         }
     })
-      .then((res) => {
+      .then(async (res) => {
         console.log('THEN', res);
+        const res_data = await res.json();
         if (res.ok){
             revalidateTag('group');
-            return JSON.stringify(res.json());
+            return JSON.stringify(res_data);
         }else{
-            const error = new HttpError(res.statusText, res.status);
+            const error = new HttpError(res.statusText, res.status, res_data);
             return Promise.reject(error);
         }
       })

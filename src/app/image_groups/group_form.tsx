@@ -1,10 +1,14 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Image from "next/image";
-import { UpdateImageGroup, RevalidateGroup } from "@/app/lib/group_actions";
+import { UpdateImageGroup, DeleteImageGroup, RevalidateGroup } from "@/app/lib/group_actions";
 import HighlightOffTwoToneIcon from '@mui/icons-material/HighlightOffTwoTone';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DialogContext } from '@/app/components/confirm_dialog';
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 
 
 export default function ImageGroupForm({group}:{group?: ImageGroup}) {
@@ -13,6 +17,10 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
     const [images, setImages] = useState<File[]>([]); //preview images to upload
     console.log('api_url', process.env.NEXT_PUBLIC_IMAGE_API_URL);
     const session = useSession();
+    const dialog_context = useContext(DialogContext) as DialogContextProp;
+    const [result, setResult] = useState<RequestResult | null>(null);
+    const router = useRouter();
+
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -37,12 +45,10 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
                 if (images.length > 0){
                     prepareImages(group_data.id);
                 }else{
-                    //location.href = `/events/${res_data.id}`; //redirect or reload the page so that we see the changes
                     await RevalidateGroup();
                 }
             }else{
                 uploadToPresigned(group_data.images, group_data.group_id);
-                //location.href = `/events/${group_data.id}`; //redirect or reload the page so that we see the changes
             }
         })
     }
@@ -90,7 +96,7 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
                         RevalidateGroup(); //revalidate group to show new images
                         setImages([]); //clear images from preview
                     }else{
-                        location.href = `/events/${group_id}`; //redirect or reload the page so that we see the changes
+                        router.push(`/events/${group_id}`); //redirect or reload the page so that we see the changes
                     }
 
                 }, 1500); // wait for resizing
@@ -127,8 +133,34 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
         });
     }
 
+    const handleDeleteGroup = async (group: ImageGroup)=>{
+        //const image_id = group_image?.dataset.id; //get image id
+        const group_id = group.id;
+
+        console.log('Delete Group', group_id);
+        console.log(dialog_context);
+        if (await dialog_context.showConfirmation(`Are you sure you want to delete the group: ${group.name}?`)){
+            await DeleteImageGroup(group_id || '').then((res)=>{
+                console.log('DeleteImageGroup', res);
+                router.push('/');
+            })
+            .catch((err)=>{
+                setResult({message:err.message, fail:true});
+                console.log('CATCH');
+                console.error(err.message);
+            });
+
+        }
+
+    }
+
     return(
         <form onSubmit={handleSubmit}>
+            {session.status == 'authenticated' && group &&
+                <button className="text-white bg-red-600 inline-block py-2 px-4" onClick={()=>{handleDeleteGroup(group)}}>Delete Image Group <DeleteIcon /></button>
+            }
+            {result?.message && <div id="group-result" className={'border fixed top-5 m-auto py-1 px-3 left-1/2 -translate-x-1/2 inline-block '
+            + (result.fail ? 'bg-red-200':'bg-green-200')}>{result.message}</div>}
             <div className="mb-3">
                 <label className="font-bold block" htmlFor="groupName">Name</label>
                 <input className="border border-gray-500 rounded-xs w-full" type="text" id="groupName" name="name" defaultValue={group?.name} />
