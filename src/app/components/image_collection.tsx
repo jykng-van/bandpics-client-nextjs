@@ -13,14 +13,14 @@ import { ImageEditDialog } from "./image_edit_dialog";
 export default function ImageCollection({
     images, groupId, clickCallback
 }: {
-    images: ImageData[] | null,
+    images: PictureData[] | null,
     groupId: string,
-    clickCallback: (image:ImageData)=>void
+    clickCallback: (image:PictureData)=>void
 }){
     const session = useSession();
     const dialog_context = useContext(DialogContext) as DialogContextProp;
     const [result, setResult] = useState<RequestResult | null>(null);
-    const [editImage, setEditImage] = useState<ImageData | null>(null);
+    const [editImage, setEditImage] = useState<PictureData | null>(null);
 
     const urlPath = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
     //const api_url = process.env.NEXT_PUBLIC_IMAGE_API_URL;
@@ -91,7 +91,7 @@ export default function ImageCollection({
         ))}
       </div>}
       {session.status === 'authenticated' && editImage!==null &&
-      <ImageEditDialog imageData={editImage} groupId={groupId} closeEdit={clearEditImage}></ImageEditDialog>
+      <ImageEditDialog PictureData={editImage} groupId={groupId} closeEdit={clearEditImage}></ImageEditDialog>
       }
     </section>
     )

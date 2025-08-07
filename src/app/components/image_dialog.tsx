@@ -8,7 +8,7 @@ export default function ImageDialog({
     image, groupId, //closed = false
 }:
 {
-    image: ImageData | null,
+    image: PictureData | null,
     groupId: string,
     //closed?: boolean
 }){
@@ -31,10 +31,10 @@ export default function ImageDialog({
     console.log(image);
 
     return (
-    <dialog id="image-dialog" className="m-5 rounded-sm backdrop:bg-black/50 backdrop:backdrop-blur-sm">
+    <dialog id="image-dialog" className="m-5 rounded-sm backdrop:bg-black/50 backdrop:backdrop-blur-sm relative flex flex-col">
         <button className="btn absolute top-2 right-5 bg-sky-300 p-1 rounded-full inline-block" onClick={closeDialog} title="Close"><CloseIcon sx={{color:'white'}} /></button>
         {image &&
-        <div className="p-2">
+        <div className="p-2 flex-1 overflow-y-auto">
             <h2 className="font-bold text-lg">{image.filename}</h2>
             <Image src={`${urlPath}/fullsize/${groupId}/${image.filename}`}
                 alt="Full size image"
@@ -44,6 +44,10 @@ export default function ImageDialog({
             />
         </div>
         }
+        {image && image.data && image.data.DateTimeOriginal &&
+        <div className="text-white bg-black/50 absolute top-0 p-2">{image.data.DateTimeOriginal}</div>}
+        {image && image.description &&
+        <div className="text-white bg-black/50 absolute bottom-0 p-2">{image.description}</div>}
     </dialog>
     )
 }

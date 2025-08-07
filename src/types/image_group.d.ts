@@ -4,6 +4,6 @@ interface ImageGroup{
     description?: string;
     created_at: string;
     updated_at: string;
-    images?: ImageData[];
+    images?: PictureData[];
     event?: string;
 }
