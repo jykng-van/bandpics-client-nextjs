@@ -2,6 +2,10 @@ interface Coords {
     longitude: number,
     latitude: number
 };
+interface GmapCoords{
+    lat: number,
+    lng: number
+};
 interface ExtraPictureData {
     DateTime: string;
     DateTimeOriginal?: string;

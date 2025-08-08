@@ -13,13 +13,16 @@ export default function EventImages({
     //group:Promise<ImageGroup>,
     imageGroup:ImageGroup,
 }){
-    const [currentImage, setCurrentImage] = useState<ImageData | null>(null);
+    const [currentImage, setCurrentImage] = useState<PictureData | null>(null);
     //const imageGroup = use(group);
 
     const session = useSession();
     console.log(session);
-    const change_current_image = (image:ImageData):void =>{
+    const change_current_image = (image:PictureData):void =>{
         setCurrentImage(image);
+    }
+    const close_image = ():void =>{
+        setCurrentImage(null);
     }
     console.log(imageGroup);
     return (
@@ -31,7 +34,8 @@ export default function EventImages({
                 <ImageGroupForm group={imageGroup} />
             </div>
             }
-            <ImageDialog image={currentImage}  groupId={imageGroup.id} />
+            {currentImage &&
+            <ImageDialog image={currentImage}  groupId={imageGroup.id} closeImage={close_image} />}
         </>
     );
 }
