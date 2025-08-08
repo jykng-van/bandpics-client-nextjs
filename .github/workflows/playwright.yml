@@ -21,6 +21,7 @@ jobs:
       COGNITO_CLIENT_SECRET: ${{secrets.COGNITO_CLIENT_SECRET}}
       USER_POOL_ID: ${{secrets.USER_POOL_ID}}
       NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{secrets.GOOGLE_MAPS_API_KEY}}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
