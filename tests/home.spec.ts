@@ -7,7 +7,7 @@ test('has mock image groups', async ({ page, next }) => {
     const test_id = '123asdfasdf';
     const mock_date = '2025-01-01T00:00:00.859000';
     next.onFetch((request) => {
-        if (request.url.includes('lambda-url')) {
+        if (request.url.includes('execute-api')) {
             return new Response(JSON.stringify(
                 [
                     { name: test_name, id: test_id, created_at:mock_date, updated_at:mock_date }

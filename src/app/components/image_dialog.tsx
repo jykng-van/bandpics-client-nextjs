@@ -43,17 +43,19 @@ export default function ImageDialog({
 
     return (
     <dialog id="image-dialog" className="m-5 rounded-sm backdrop:bg-black/50 backdrop:backdrop-blur-sm relative flex flex-col">
-        <button className="btn absolute top-2 right-5 bg-sky-300 p-1 rounded-full inline-block" onClick={closeDialog} title="Close"><CloseIcon sx={{color:'white'}} /></button>
+        <button id="close-image-dialog" className="btn absolute top-2 right-5 bg-sky-300 p-1 rounded-full inline-block"
+        onClick={closeDialog} title="Close"><CloseIcon sx={{color:'white'}} /></button>
         {image &&
         <div>
-            <div className={'absolute top-0 left-0 p-3 transition duration-600 '+(showInfo ? 'bg-black/50':'bg-transparent')}>
+            <div id="additional-image-info" className={'absolute top-0 left-0 p-3 transition duration-600 '+(showInfo ? 'bg-black/50':'bg-transparent')}>
                 <div className="flex flex-row justify-start gap-4">
-                    <button type="button" title="Additional Info" className="inline-block" onClick={toggleInfo}><Info sx={{color:blue[400]}} /></button>
+                    <button type="button" id="image-toggle-info"
+                    title="Additional Info" className="inline-block" onClick={toggleInfo}><Info sx={{color:blue[400]}} /></button>
                     {showInfo &&
                     <div className="text-white">
                         <h3 className="font-bold text-lg">{image.filename}</h3>
                         {image.data && image.data.DateTimeOriginal &&
-                        <div className="">{moment(image.data.DateTimeOriginal).format('MMM DD, YYYY HH:mm:ss')}</div>}
+                        <div className="date">{moment(image.data.DateTimeOriginal).format('MMM DD, YYYY HH:mm:ss')}</div>}
                     </div>}
                 </div>
                 <div className={'transition-[height] duration-600 overflow-hidden '+(showInfo ? 'h-[25rem]':'h-0')}>
