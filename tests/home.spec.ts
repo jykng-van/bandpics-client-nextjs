@@ -6,8 +6,10 @@ test('has mock image groups', async ({ page, next }) => {
     const test_name = 'Test Image Group'
     const test_id = '123asdfasdf';
     const mock_date = '2025-01-01T00:00:00.859000';
+    const api_url = (process.env.NEXT_PUBLIC_IMAGE_API_URL as string);
+    console.log('mock image group api_url', api_url);
     next.onFetch((request) => {
-        if (request.url.includes('execute-api')) {
+        if (request.url.includes(api_url)) {
             return new Response(JSON.stringify(
                 [
                     { name: test_name, id: test_id, created_at:mock_date, updated_at:mock_date }

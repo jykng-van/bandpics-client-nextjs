@@ -9,8 +9,9 @@ test('load images and fullsize dialog works', async ({ page, next }) => {
     const test_id = '456lkjhasdf';
     const mock_date = '2025-01-01T00:00:00.859000';
     const mock_date_transformed = 'Jan 01, 2025';
+    const api_url = (process.env.NEXT_PUBLIC_IMAGE_API_URL as string);
     next.onFetch((request) => {
-        if (request.url.includes('execute-api')) {
+        if (request.url.includes(api_url)) {
             return new Response(JSON.stringify(
             {
                 id:test_group,
