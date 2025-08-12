@@ -14,10 +14,10 @@ export default function Login() {
                 session.status === "authenticated" ? (
                     <div>
                         Hello, {session.data?.user?.name}!
-                        <button onClick={() => signOut()}><LogoutIcon /></button>
+                        <button id="logout-button" onClick={() => signOut()}><LogoutIcon /></button>
                     </div>
                 ) : (
-                    <button onClick={() => signIn('cognito')}>Login <LoginIcon /></button>
+                    <button id="login-button" onClick={() => signIn('cognito')}>Login <LoginIcon /></button>
                 )
             }
         </>
