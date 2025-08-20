@@ -23,14 +23,17 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@faker-js/faker": "^9.9.0",
     "@playwright/test": "^1.50.1",
     "@tailwindcss/postcss": "^4",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "cross-fetch": "^4.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
+    "jsonwebtoken": "^9.0.2",
     "msw": "^2.10.2",
     "tailwindcss": "^4",
     "typescript": "^5"

@@ -28,20 +28,22 @@ export const config = {
     ], // rest of your config
     callbacks: {
         async session({ session, token }) {
-            //console.log(session);
-            //console.log('session callback', token);
+            /* console.log(session);
+            console.log('session callback', token); */
+
             // Send properties to the client, like an access_token and user id from a provider.
-            session.user.accessToken = token.accessToken as string;
+            /*
             session.user.refreshToken = token.refreshToken as string;
-            session.user.idToken = token.idToken as string;
+            session.user.idToken = token.idToken as string; */
+            session.user.accessToken = token.accessToken as string;
             session.user.id = token.sub;
 
             return session
         },
         async jwt({ token, account, user, profile }) {
             // Persist the OAuth access_token and or the user id to the token right after signin
-            /* console.log('jwt callback account', account);
-            console.log('jwt callback token', token); */
+            console.log('jwt callback account', account);
+            console.log('jwt callback token', token);
 
             if (token && account) { //initial signin, because account sent
                 console.log('jwt callback: new account', account);
@@ -119,8 +121,8 @@ export function auth(
     | [NextApiRequest, NextApiResponse]
     | []
 ) {
-    /* console.log('auth', args);
-    console.log('auth_options?', config); */
+    console.log('auth', args);
+    console.log('auth_options?', config);
   return getServerSession(...args, config)
 }
 

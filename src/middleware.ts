@@ -1,5 +1,7 @@
 export { default } from "next-auth/middleware";
 
+console.log('middleware!!');
+
 export const config = {
-    matcher:['/image_groups/create']
+    matcher:['/image_groups/create'],
 }

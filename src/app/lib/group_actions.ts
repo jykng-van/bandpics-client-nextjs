@@ -19,6 +19,7 @@ export const GetImageGroup = async (groupId: string) : Promise<ImageGroup>=>{
 export const UpdateImageGroup = async (formData: FormData, group?: ImageGroup)=>{
     //const is_new_group = formData.get('id') == ''; //if it's a new group
     const session = await auth();
+    console.log('updateimagegroup session', session);
     const is_new_group = !group; //if it's a new group
     console.log('is new group', is_new_group);
 
