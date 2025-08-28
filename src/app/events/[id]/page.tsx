@@ -28,7 +28,7 @@ export default async function EventPage({
     <div>
       <Suspense fallback={<Loading />}>
         <h1 className="font-bold text-2xl">{live_event?.name}</h1>
-        {live_event?.eventDate && <time className="italic" dateTime={live_event.eventDate}>{moment(live_event.eventDate, 'YYYY-MM-DD').format('MMMM D, YYYY')}</time>}
+        {live_event?.event_date && <time className="italic" dateTime={live_event.event_date}>{moment(live_event.event_date, 'YYYY-MM-DD').format('MMMM D, YYYY')}</time>}
         {live_event?.description &&
           <p>{live_event.description}</p>
         }

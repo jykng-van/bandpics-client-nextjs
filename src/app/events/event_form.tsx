@@ -78,8 +78,8 @@ export default function EventForm({liveEvent}:{liveEvent?: LiveEvent}) {
                 <textarea className="border border-gray-500 rounded-xs w-full" id="eventDescription" name="description" defaultValue={liveEvent?.description}></textarea>
             </div>
             <div className="mb-3">
-                <label className="font-bold block" htmlFor="eventDate">Event Date</label>
-                <input className="border border-gray-500 rounded-xs w-full" type="date" id="eventDate" name="eventDate" defaultValue={liveEvent?.eventDate} />
+                <label className="font-bold block" htmlFor="event_date">Event Date</label>
+                <input className="border border-gray-500 rounded-xs w-full" type="date" id="event_date" name="event_date" defaultValue={liveEvent?.event_date} />
             </div>
 
             <button className="font-bold text-white bg-blue-800 p-2 inline-block rounded-sm" type="submit">Save</button>

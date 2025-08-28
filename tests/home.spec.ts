@@ -1,13 +1,13 @@
 //make sure playwright is 1.50.1 because otherwise page.goto won't work with experimental
 import { test, expect } from "next/experimental/testmode/playwright";
 
-test('has mock image groups', async ({ page, next }) => {
+test('has mock events', async ({ page, next }) => {
     // Listen for any fetch requests
-    const test_name = 'Test Image Group'
+    const test_name = 'Test Live Event'
     const test_id = '123asdfasdf';
     const mock_date = '2025-01-01T00:00:00.859000';
-    const api_url = (process.env.NEXT_PUBLIC_IMAGE_API_URL as string);
-    console.log('mock image group api_url', api_url);
+    const api_url = (process.env.NEXT_PUBLIC_EVENT_API_URL as string);
+    console.log('mock live event api_url', api_url);
     next.onFetch((request) => {
         if (request.url.includes(api_url)) {
             return new Response(JSON.stringify(

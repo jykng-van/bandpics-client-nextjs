@@ -28,8 +28,8 @@ export const UpdateLiveEvent = async (formData: FormData, event?: LiveEvent)=>{
     const event_data = {
         event:Object.fromEntries(formData.entries())
     };
-    if (event_data.event['eventDate']==''){
-        delete event_data.event['eventDate'];
+    if (event_data.event['event_date']==''){
+        delete event_data.event['event_date'];
     }
     console.log('event data', event_data);
     const id = event?.id;

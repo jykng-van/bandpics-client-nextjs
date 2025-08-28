@@ -3,24 +3,39 @@ import { test, expect } from "next/experimental/testmode/playwright";
 
 test('load images and fullsize dialog works', async ({ page, next }) => {
     // Listen for any fetch requests
-    const test_name = 'group1';
-    const test_filename = 'test.jpg';
-    const test_group = '123asdfasdf';
-    const test_id = '456lkjhasdf';
+    const test_event_name = 'event1';
+    const test_event_id = '123asdfasdf';
+    const event_api_url = (process.env.NEXT_PUBLIC_EVENT_API_URL as string);
+
     const mock_date = '2025-01-01T00:00:00.859000';
+
+    const test_group_id = '456lkjhasdf';
+    const test_group_name = 'group1';
+
+    const test_image_id = '6789asdf';
+    const test_filename = 'test.jpg';
     const mock_date_transformed = 'Jan 01, 2025';
-    const api_url = (process.env.NEXT_PUBLIC_IMAGE_API_URL as string);
+    const image_api_url = (process.env.NEXT_PUBLIC_IMAGE_API_URL as string);
+
     next.onFetch((request) => {
-        if (request.url.includes(api_url)) {
+        if (request.url.includes(event_api_url)) {
             return new Response(JSON.stringify(
-            {
-                id:test_group,
-                name:test_name,
+            [{
+                id:test_event_id,
+                name:test_event_name,
+                created_at:mock_date,
+                updated_at:mock_date,
+            }]));
+        }else if (request.url.includes(image_api_url)) {
+            return new Response(JSON.stringify(
+            [{
+                id:test_group_id,
+                name:test_group_name,
                 created_at:mock_date,
                 updated_at:mock_date,
                 images:[
                     {
-                        id:test_id,
+                        id:test_image_id,
                         filename:test_filename,
                         created_at:mock_date,
                         updated_at:mock_date,
@@ -35,22 +50,23 @@ test('load images and fullsize dialog works', async ({ page, next }) => {
                         }
                     }
                 ]
-            }));
+            }]));
         }
 
         // If the request is not lambda, abort it
         return "abort";
     });
-    await page.goto(`/events/${test_group}`);
+
+    await page.goto(`/events/${test_event_id}`);
 
     // Expect a thumbnail of the image to exist
-    const thumb_path = encodeURIComponent(`thumb/${test_group}/${test_filename}`);
+    const thumb_path = encodeURIComponent(`thumb/${test_group_id}/${test_filename}`);
     await expect(page.locator(`img[src*="${thumb_path}"]`)).toBeVisible();
 
     // Expect fullsize image to open
-    await page.locator(`a[href*="fullsize/${test_group}/${test_filename}"]`).click();
+    await page.locator(`a[href*="fullsize/${test_group_id}/${test_filename}"]`).click();
     await expect(page.locator('dialog#image-dialog')).toBeVisible(); //check for image dialog
-    const fullsize_path = encodeURIComponent(`fullsize/${test_group}/${test_filename}`);
+    const fullsize_path = encodeURIComponent(`fullsize/${test_group_id}/${test_filename}`);
     await expect(page.locator(`img[src*="${fullsize_path}"]`)).toBeVisible(); //check for fullsize image
 
     //Additional info tests

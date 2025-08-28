@@ -4,7 +4,7 @@ interface LiveEvent{
     description?: string;
     created_at: string;
     updated_at: string;
-    eventDate?: string;
+    event_date?: string;
     location: object;
     data: object;
     groups?: ImageGroup[];
