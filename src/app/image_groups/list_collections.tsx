@@ -19,7 +19,7 @@ export const ListCollections = ({
         <ul>
             {allGroups.map((group) => (
                 <li key={group.id}>
-                    <a href={`/events/${group.id}`}>{group.name}</a>
+                    <a href={`/image_groups/${group.id}`}>{group.name}</a>
                 </li>
             ))}
         </ul>

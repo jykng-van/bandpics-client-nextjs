@@ -7,7 +7,7 @@ import ImageDialog from '@/app/components/image_dialog';
 import ImageGroupForm from '@/app/image_groups/group_form';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function EventImages({
+export default function GroupImages({
     imageGroup,
 }:{
     //group:Promise<ImageGroup>,

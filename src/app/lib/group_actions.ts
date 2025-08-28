@@ -30,6 +30,7 @@ export const UpdateImageGroup = async (formData: FormData, group?: ImageGroup)=>
             name: formData.get('name') as string,
             description: formData.get('description') as string,
             images:is_new_group ? formData.getAll('images[]') : [],
+            event: formData.get('event') || null
         }
     };
 
@@ -48,11 +49,15 @@ export const UpdateImageGroup = async (formData: FormData, group?: ImageGroup)=>
                 'Authorization': `Bearer ${session?.user.accessToken}`,
             },
             body: JSON.stringify(group_data),
+            next:{
+                tags:['group','image','event']
+            }
         }
     )
     const result = await response.json();
     console.log(result);
     if (response.ok){
+        revalidateTag('event');
         return result;
     }else{
         const error = new HttpError(response.statusText, response.status);
@@ -79,6 +84,17 @@ export const GetAllGroups = async ()=>{
     .catch((err) => {
         console.error('Error getting groups.', err);
     });
+}
+export const GetEventGroups = async (eventId: string) : Promise<ImageGroup[]>=>{
+    return fetch(`${image_api}/image_groups/?event=${eventId}`, {
+        next:{
+            tags:['group','image']
+        }
+    })
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error('Error getting image group,', err);
+      });
 }
 export const DeleteImageGroup = async (groupId: string) =>{
     console.log('DELETE IMAGEGROUP');

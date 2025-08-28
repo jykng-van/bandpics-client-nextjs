@@ -1,29 +1,33 @@
 //import Image from "next/image";
-import {ListCollections} from "./list_collections";
-import AddGroup from "./components/add_group";
+import {ListCollections} from "@/app/events/list_collections";
+import AddEvent from "@/app/events/add_event";
 import { Suspense } from "react";
-import Loading from "./loading";
+import Loading from "./components/loading";
+import Link from "next/link";
 
 export default async function Home() {
-  const get_image_groups = () : Promise<ImageGroup[]> =>{
-    return fetch(`${process.env.IMAGE_API_URL}/image_groups`)
+  const get_live_events = () : Promise<LiveEvent[]> =>{
+    return fetch(`${process.env.EVENT_API_URL}/events`)
       .then((res) => res.json())
       .catch((err) => {
         console.error("Error fetching image groups:", err);
       });
   }
 
-  const imageGroups = get_image_groups();
+  const liveEvents = get_live_events();
 
   //const imageGroups = await data.json();
   //console.log(imageGroups);
   return (
     <div className="">
-      <h1>Image Groups</h1>
-      <AddGroup />
+
+      <Link href="/image_groups">Go to Image Groups</Link>
+
+      <h1 className="text-xl">Live Events</h1>
+      <AddEvent />
 
       <Suspense fallback={<Loading />}>
-        <ListCollections groups={imageGroups} />
+        <ListCollections events={liveEvents} />
       </Suspense>
     </div>
 

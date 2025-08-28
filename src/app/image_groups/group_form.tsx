@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import { UpdateImageGroup, DeleteImageGroup, RevalidateGroup } from "@/app/lib/group_actions";
+import { GetAllLiveEvents } from "../lib/event_actions";
 import HighlightOffTwoToneIcon from '@mui/icons-material/HighlightOffTwoTone';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DialogContext } from '@/app/components/confirm_dialog';
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 
@@ -20,6 +21,22 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
     const dialog_context = useContext(DialogContext) as DialogContextProp;
     const [result, setResult] = useState<RequestResult | null>(null);
     const router = useRouter();
+
+    const [selectedEvent, setSelectedEvent] = useState<string>(group?.event || '');
+    const [liveEvents, setLiveEvents] = useState<LiveEvent[]>([]);
+
+    const searchParams = useSearchParams();
+
+    useEffect(()=>{
+        const initEvents = async ()=>{
+            setLiveEvents(await GetAllLiveEvents()); //load live events
+        }
+        initEvents();
+        if (searchParams.has('event') && searchParams.get('event') != ''){
+            console.log('event', searchParams.get('event'));
+            setSelectedEvent(searchParams.get('event') || '');
+        }
+    }, [searchParams]);
 
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +113,8 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
                         RevalidateGroup(); //revalidate group to show new images
                         setImages([]); //clear images from preview
                     }else{
-                        router.push(`/events/${group_id}`); //redirect or reload the page so that we see the changes
+                        const redirect_id = selectedEvent || group_id;
+                        router.push(`/events/${redirect_id}`); //redirect or reload the page so that we see the changes
                     }
 
                 }, 1500); // wait for resizing
@@ -168,6 +186,14 @@ export default function ImageGroupForm({group}:{group?: ImageGroup}) {
             <div className="mb-3">
                 <label className="font-bold block" htmlFor="groupDescription">Description</label>
                 <textarea className="border border-gray-500 rounded-xs w-full" id="groupDescription" name="description" defaultValue={group?.description}></textarea>
+            </div>
+            <div className="mb-3">
+                <label className="font-bold block" htmlFor="groupEvent">Event</label>
+                <select className="border border-gray-500 rounded-xs w-full" id="groupEvent" name="event"
+                value={selectedEvent} onChange={(e)=>setSelectedEvent(e.target.value)}>
+                    <option value="">Choose Live Event</option>
+                    {liveEvents.map(e=>(<option value={e.id} key={e.id}>{e.name}</option>))}
+                </select>
             </div>
 
             <div className="border-3 border-dashed border-gray-500 rounded p-3 mb-3">

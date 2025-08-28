@@ -15,7 +15,7 @@ export default function ImageCollection({
 }: {
     images: PictureData[] | null,
     groupId: string,
-    clickCallback: (image:PictureData)=>void
+    clickCallback: (image:PictureData, groupId?:string)=>void
 }){
     const session = useSession();
     const dialog_context = useContext(DialogContext) as DialogContextProp;
@@ -73,7 +73,7 @@ export default function ImageCollection({
         {images && <div className="flex flex-wrap gap-2">
         {images.map((image) => (
           <div className="group-image" key={image.id} data-id={image.id}>
-            <a href={fullsize_url(image.filename)} onClick={e=>{e.preventDefault(); clickCallback(image)}} className="block">
+            <a href={fullsize_url(image.filename)} onClick={e=>{e.preventDefault(); clickCallback(image, groupId)}} className="block">
               <Image
               src={thumb_url(image.filename)}
               alt={image.filename}
