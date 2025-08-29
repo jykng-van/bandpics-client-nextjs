@@ -36,7 +36,7 @@ const EventPage = async ({
 
         <AddGroup eventId={id} />
 
-        <EventForm liveEvent={live_event} />
+        <EventForm liveEvent={live_event} groups={event_groups} />
       </Suspense>
 
     </div>
