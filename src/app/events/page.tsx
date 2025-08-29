@@ -1,10 +1,10 @@
 //import Image from "next/image";
-import {ListCollections} from "@/app/image_groups/list_collections";
-import AddGroup from "@/app/image_groups/add_group";
+import { ListCollections } from "@/app/image_groups/list_collections";
+import { AddGroup } from "@/app/image_groups/add_group";
 import { Suspense } from "react";
-import Loading from "@/app/components/loading";
+import { Loading } from "@/app/components/loading";
 
-export default async function Home() {
+const EventsHome = async () => {
   const get_image_groups = () : Promise<ImageGroup[]> =>{
     return fetch(`${process.env.IMAGE_API_URL}/image_groups`)
       .then((res) => res.json())
@@ -29,3 +29,4 @@ export default async function Home() {
 
   );
 }
+export default EventsHome;

@@ -1,8 +1,8 @@
-import ImageGroupForm from "@/app/image_groups/group_form";
+import { ImageGroupForm } from "@/app/image_groups/group_form";
 //import { getServerSession } from "next-auth/next";
 
 
-export default async function CreateImageGroup() {
+const CreateImageGroup = async() => {
     //const imageGroup = use(group);
 
     return(
@@ -12,3 +12,4 @@ export default async function CreateImageGroup() {
         </>
     )
 }
+export default CreateImageGroup;

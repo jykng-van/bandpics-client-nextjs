@@ -2,17 +2,17 @@
 
 import { useState } from 'react';
 import { useSession } from "next-auth/react";
-import ImageCollection from '@/app/components/image_collection';
-import ImageDialog from '@/app/components/image_dialog';
-import ImageGroupForm from '@/app/image_groups/group_form';
+import { ImageCollection } from '@/app/components/image_collection';
+import { ImageDialog } from '@/app/components/image_dialog';
+import { ImageGroupForm } from '@/app/image_groups/group_form';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function GroupImages({
+export const GroupImages = ({
     imageGroup,
 }:{
     //group:Promise<ImageGroup>,
     imageGroup:ImageGroup,
-}){
+})=>{
     const [currentImage, setCurrentImage] = useState<PictureData | null>(null);
     //const imageGroup = use(group);
 

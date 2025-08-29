@@ -2,8 +2,8 @@
 
 import { useState, useContext } from 'react';
 import { useSession } from "next-auth/react";
-import ImageCollection from '@/app/components/image_collection';
-import ImageDialog from '@/app/components/image_dialog';
+import { ImageCollection } from '@/app/components/image_collection';
+import { ImageDialog } from '@/app/components/image_dialog';
 import Link from 'next/link';
 
 import { DialogContext } from '@/app/components/confirm_dialog';
@@ -13,12 +13,12 @@ import { DeleteImageGroup } from '../lib/group_actions';
 //import ImageGroupForm from '@/app/image_groups/group_form';
 //import EditIcon from '@mui/icons-material/Edit';
 
-export default function EventImages({
+export const EventImages = ({
     groups,
 }:{
     //group:Promise<ImageGroup>,
     groups:ImageGroup[],
-}){
+})=>{
     const [currentImage, setCurrentImage] = useState<PictureData | null>(null);
     const [currentGroupId, setCurrentGroupId] = useState<string | null>(null);
     const [result, setResult] = useState<RequestResult | null>(null);

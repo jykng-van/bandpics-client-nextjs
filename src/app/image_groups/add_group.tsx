@@ -2,7 +2,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 
-export default function AddGroup({eventId}:{eventId?:string}){
+export const AddGroup = ({eventId}:{eventId?:string}) => {
     const session = useSession();
     const router = useRouter();
 

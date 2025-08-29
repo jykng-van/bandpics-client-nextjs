@@ -2,8 +2,6 @@
 
 import { use } from "react"
 
-
-
 export const ListCollections = ({
     groups,
 }: {

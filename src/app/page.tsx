@@ -1,11 +1,11 @@
 //import Image from "next/image";
-import {ListCollections} from "@/app/events/list_collections";
-import AddEvent from "@/app/events/add_event";
+import { ListCollections } from "@/app/events/list_collections";
+import { AddEvent } from "@/app/events/add_event";
 import { Suspense } from "react";
-import Loading from "./components/loading";
+import { Loading } from "./components/loading";
 import Link from "next/link";
 
-export default async function Home() {
+const Home = async ()=>{
   const get_live_events = () : Promise<LiveEvent[]> =>{
     return fetch(`${process.env.EVENT_API_URL}/events`)
       .then((res) => res.json())
@@ -33,3 +33,4 @@ export default async function Home() {
 
   );
 }
+export default Home;

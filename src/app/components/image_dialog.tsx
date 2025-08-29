@@ -8,14 +8,14 @@ import Info from '@mui/icons-material/Info';
 import CloseIcon from '@mui/icons-material/Close';
 import { blue } from '@mui/material/colors';
 
-export default function ImageDialog({
+export const ImageDialog = ({
     image, groupId, closeImage
 }:
 {
     image: PictureData | null,
     groupId: string,
     closeImage: ()=>void
-}){
+})=>{
     const urlPath = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
     const [showInfo, setShowInfo] = useState<boolean>(false);
 

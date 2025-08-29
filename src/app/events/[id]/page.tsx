@@ -1,19 +1,19 @@
 import { Suspense } from "react";
-import Loading from "@/app/components/loading";
-import EventImages from "../event_images";
+import { Loading } from "@/app/components/loading";
+import { EventImages } from "../event_images";
 import { GetLiveEvent } from "@/app/lib/event_actions";
 import { GetEventGroups } from "@/app/lib/group_actions";
-import AddGroup from "@/app/image_groups/add_group";
-import EventForm from "../event_form";
+import { AddGroup } from "@/app/image_groups/add_group";
+import { EventForm } from "../event_form";
 import moment from "moment";
 
 
 //use group ids for now
-export default async function EventPage({
+const EventPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>
-}) {
+})=>{
   const { id } = await params
 
   const promise_event = GetLiveEvent(id);
@@ -42,3 +42,4 @@ export default async function EventPage({
     </div>
   )
 }
+export default EventPage;

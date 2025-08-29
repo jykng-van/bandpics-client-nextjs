@@ -1,7 +1,7 @@
 'use client';
 import { useSession } from "next-auth/react";
 
-export default function AddEvent(){
+export const AddEvent = ()=>{
     const session = useSession();
 
     return (

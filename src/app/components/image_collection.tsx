@@ -10,13 +10,13 @@ import { DialogContext } from './confirm_dialog';
 import { ImageEditDialog } from "./image_edit_dialog";
 
 
-export default function ImageCollection({
+export const ImageCollection = ({
     images, groupId, clickCallback
 }: {
     images: PictureData[] | null,
     groupId: string,
     clickCallback: (image:PictureData, groupId?:string)=>void
-}){
+})=>{
     const session = useSession();
     const dialog_context = useContext(DialogContext) as DialogContextProp;
     const [result, setResult] = useState<RequestResult | null>(null);

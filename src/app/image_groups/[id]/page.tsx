@@ -1,15 +1,15 @@
 import { Suspense } from "react";
-import Loading from "@/app/components/loading";
-import GroupImages from "./group_images";
+import { Loading } from "@/app/components/loading";
+import { GroupImages } from "./group_images";
 import { GetImageGroup } from "@/app/lib/group_actions";
 import Link from "next/link";
 
 //use group ids for now
-export default async function EventPage({
+const EventPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>
-}) {
+}) => {
   const { id } = await params
 
   const promise_group = GetImageGroup(id);
@@ -32,3 +32,4 @@ export default async function EventPage({
     </div>
   )
 }
+export default EventPage;

@@ -1,6 +1,6 @@
 'use client';
 
-export default function Loading(){
+export const Loading = ()=>{
     return (
         <div>
             Loading...

@@ -4,7 +4,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 //import { useState } from 'react';
 import { useSession, signIn, signOut } from "next-auth/react";
 
-export default function Login() {
+export const Login = () => {
     const session = useSession();
     console.log(session);
     console.log(session.data);

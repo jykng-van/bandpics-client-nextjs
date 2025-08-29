@@ -1,4 +1,4 @@
-import {APIProvider, Map, AdvancedMarker, Pin} from '@vis.gl/react-google-maps';
+import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { useState, useEffect } from 'react';
 
 export const LocationMap = ({imageCoords}:{imageCoords:Coords})=>{

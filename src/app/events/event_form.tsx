@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 
 
-export default function EventForm({liveEvent}:{liveEvent?: LiveEvent}) {
+export const EventForm = ({liveEvent}:{liveEvent?: LiveEvent}) => {
     console.log('event', liveEvent);
     const api_url = process.env.NEXT_PUBLIC_EVENT_API_URL;
     console.log('api_url', api_url);
