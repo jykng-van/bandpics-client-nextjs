@@ -124,6 +124,31 @@ export const DeleteLiveEvent = async (eventId: string) =>{
         console.error('Error deleting event,', err);
       });
 }
+export const GetLocations = async (coords:GmapCoords, searchType:number, radius:number) =>{
+    const params = new URLSearchParams();
+    params.append('lng', coords.lng.toString());
+    params.append('lat', coords.lat.toString());
+    params.append('search_type', searchType.toString());
+    params.append('radius', radius.toString());
+    return fetch(`${event_api}/locations?${params}`, {
+        next:{
+            tags:['locations']
+        }
+    })
+    .then(async (res) => {
+        if (res.ok){
+            const res_data = await res.json();
+            return Promise.resolve(res_data);
+        }else{
+            const error = new HttpError(res.statusText, res.status);
+            return Promise.reject(error);
+        }
+
+    })
+    .catch((err) => {
+        console.error('Error getting locations.', err);
+    });
+}
 export const RevalidateEvent = async ()=>{
     console.log('Revalidate event!');
     revalidateTag('event');
