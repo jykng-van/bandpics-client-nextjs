@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react"
 import { ImageGroupsContext } from "@/app/events/event_form";
-import { APIProvider, Map as GMap, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
+import { useMap, Map as GMap, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { GetLocations } from "@/app/lib/event_actions";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
@@ -13,6 +13,15 @@ export const LocationPicker = ()=>{
     const [groupedCoords, setGroupedCoords] = useState<Map<string, {images:string[]}>>(new Map());
     const [locationResult, setLocationResult] = useState<Location | null>(null);
     const [selectedPoint, setSelectedPoint] = useState<number>(0);
+    const [startingCenter, setStartingCenter] = useState<GmapCoords | null>(null);
+
+    const map = useMap();
+    useEffect(() => {
+        if (!map) return;
+
+        // do something with the map instance
+    }, [map]);
+
 
     console.log('LocationMap', foundCoords);
     console.log(foundCoords[0]);
@@ -51,6 +60,7 @@ export const LocationPicker = ()=>{
         console.log('sorted_coords', sorted_coords);
         console.log('grouped_coords', coords);
         findLocations(sorted_coords[0]);
+        setStartingCenter(sorted_coords[0]);
     }, [imageGroups]);
 
     const getSortedCoords = (coords:Map<string, {images:string[]}>)=>{
@@ -76,29 +86,45 @@ export const LocationPicker = ()=>{
         console.log('findLocations', locations_results);
         setLocationResult(locations_results);
     }
+    const changeSelected = (inc:number)=>{
+        //Make only -1 or 1
+        inc = inc < 0? -1:1;
+        let index:number = selectedPoint;
+        if (inc == -1 && selectedPoint==0){
+            index = foundCoords.length-1; //wrap around 0
+        }else if (inc == 1 && selectedPoint==foundCoords.length-1){
+            index = 0; //wrap around end of array
+        }else{
+            index += inc; //standard
+        }
+        setSelectedPoint(index);
+        map?.panTo(foundCoords[index]);
+    }
+    const getKeyFromFound = (coord:GmapCoords)=> JSON.stringify([coord.lng,coord.lat]);
 
     return(
-        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}>
+        <>
             <div>{foundCoords.length} possible coordinates found</div>
-            <section className="grid grid-cols-[1fr_20rem] grid-rows-[4rem_1fr] w-[95vw] h-[90vh]">
+            <section className="grid grid-cols-[1fr_20rem] grid-rows-[4rem_1fr] size-full">
                 <div className="row-span-full">
                 {foundCoords &&
                 <GMap defaultZoom={18} defaultCenter={foundCoords[0]} style={{width:'100%', height:'100%'}} mapId={'venue-location'}>
                     {foundCoords.map((coord, index)=>(
                         <AdvancedMarker key={`maker${index}`} position={coord} zIndex={index==selectedPoint ? 2:1}
                         clickable={true} onClick={()=>setSelectedPoint(index)}>
-                            <Pin background={index==selectedPoint ? '#147631ff':'#a5a1a1ff'} glyphColor={'#000'} borderColor={'#000'}></Pin>
+                            <Pin background={index==selectedPoint ? '#932e1dff':'#a5a1a1ff'} glyphColor={'#000'} borderColor={'#000'}></Pin>
                         </AdvancedMarker>
                     ))}
                 </GMap>}
                 </div>
                 <div className="flex flex-row items-center justify-stretch">
-                    <button><ArrowLeftIcon /></button>
+                    <button onClick={()=>changeSelected(-1)}><ArrowLeftIcon /></button>
                     <div className="flex-1 text-center">
                         Coordinate {selectedPoint + 1} <br />
-                        <em></em>
+                        {foundCoords && foundCoords[selectedPoint] &&
+                        <em>{groupedCoords.get(getKeyFromFound(foundCoords[selectedPoint]))?.images.length} Images</em>}
                     </div>
-                    <button><ArrowRightIcon /></button>
+                    <button onClick={()=>changeSelected(1)}><ArrowRightIcon /></button>
                 </div>
                 <div>
                     <h3>Places Found</h3>
@@ -115,7 +141,7 @@ export const LocationPicker = ()=>{
                 </div>
 
             </section>
+        </>
 
-        </APIProvider>
     );
 }
