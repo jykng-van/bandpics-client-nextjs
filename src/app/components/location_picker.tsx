@@ -4,16 +4,20 @@ import { useMap, Map as GMap, AdvancedMarker, Pin } from '@vis.gl/react-google-m
 import { GetLocations } from "@/app/lib/event_actions";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import Image from "next/image";
 
 
 export const LocationPicker = ()=>{
     const imageGroups = useContext(ImageGroupsContext);
 
-    const [foundCoords, setFoundCoords] = useState<GmapCoords[]>([]);
-    const [groupedCoords, setGroupedCoords] = useState<Map<string, {images:string[]}>>(new Map());
+    const [foundCoords, setFoundCoords] = useState<{images:string[], coords:GmapCoords}[]>([]);
     const [locationResult, setLocationResult] = useState<Location | null>(null);
     const [selectedPoint, setSelectedPoint] = useState<number>(0);
+    const [showingPics, setShowingPics] = useState<boolean>(false);
+
     const [startingCenter, setStartingCenter] = useState<GmapCoords | null>(null);
+
+    const cloudfront = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
 
     const map = useMap();
     useEffect(() => {
@@ -21,12 +25,6 @@ export const LocationPicker = ()=>{
 
         // do something with the map instance
     }, [map]);
-
-
-    console.log('LocationMap', foundCoords);
-    console.log(foundCoords[0]);
-
-
 
     useEffect(() => {
         const DECIMALS = 4; //the coordinate accuracy we want, 4 decimals places is roughly 11.1 metres
@@ -47,20 +45,19 @@ export const LocationPicker = ()=>{
 
                     // Add or update the entry in the new Map
                     const coord_data = coords.get(key) || {images:[]};
-                    coord_data.images.push(`${group.name}/[SIZE]/${img.filename}`);
+                    coord_data.images.push(`[SIZE]/${group.id}/${img.filename}`);
                     if (!coords.has(key)){
                         coords.set(key, coord_data);
                     }
                 }
             });
         });
-        setGroupedCoords(coords);
+
         const sorted_coords = getSortedCoords(coords)
         setFoundCoords(sorted_coords);
         console.log('sorted_coords', sorted_coords);
-        console.log('grouped_coords', coords);
-        findLocations(sorted_coords[0]);
-        setStartingCenter(sorted_coords[0]);
+        findLocations(sorted_coords[0].coords);
+        setStartingCenter(sorted_coords[0].coords);
     }, [imageGroups]);
 
     const getSortedCoords = (coords:Map<string, {images:string[]}>)=>{
@@ -72,11 +69,11 @@ export const LocationPicker = ()=>{
             }else{
                 return 0;
             }
-        }).map(([coord, _found])=> {
+        }).map(([coord, found])=> {
             const [lng, lat] = JSON.parse(coord);
             return {
-                lng,
-                lat
+                coords:{lng,lat},
+                images:found.images
             }
         });
     }
@@ -98,33 +95,48 @@ export const LocationPicker = ()=>{
             index += inc; //standard
         }
         setSelectedPoint(index);
-        map?.panTo(foundCoords[index]);
+        map?.panTo(foundCoords[index].coords);
     }
-    const getKeyFromFound = (coord:GmapCoords)=> JSON.stringify([coord.lng,coord.lat]);
+
 
     return(
         <>
             <div>{foundCoords.length} possible coordinates found</div>
-            <section className="grid grid-cols-[1fr_20rem] grid-rows-[4rem_1fr] size-full">
+            <section className="grid grid-cols-[1fr_20rem] grid-rows-[auto_1fr] size-full">
                 <div className="row-span-full">
-                {foundCoords &&
-                <GMap defaultZoom={18} defaultCenter={foundCoords[0]} style={{width:'100%', height:'100%'}} mapId={'venue-location'}>
-                    {foundCoords.map((coord, index)=>(
-                        <AdvancedMarker key={`maker${index}`} position={coord} zIndex={index==selectedPoint ? 2:1}
+                {foundCoords.length &&
+                <GMap defaultZoom={18} defaultCenter={foundCoords[0].coords} style={{width:'100%', height:'100%'}} mapId={'venue-location'}>
+                    {foundCoords.map((point, index)=>(
+                        <AdvancedMarker key={`maker${index}`} position={point.coords} zIndex={index==selectedPoint ? 2:1}
                         clickable={true} onClick={()=>setSelectedPoint(index)}>
                             <Pin background={index==selectedPoint ? '#932e1dff':'#a5a1a1ff'} glyphColor={'#000'} borderColor={'#000'}></Pin>
                         </AdvancedMarker>
                     ))}
                 </GMap>}
                 </div>
-                <div className="flex flex-row items-center justify-stretch">
-                    <button onClick={()=>changeSelected(-1)}><ArrowLeftIcon /></button>
-                    <div className="flex-1 text-center">
-                        Coordinate {selectedPoint + 1} <br />
-                        {foundCoords && foundCoords[selectedPoint] &&
-                        <em>{groupedCoords.get(getKeyFromFound(foundCoords[selectedPoint]))?.images.length} Images</em>}
+                <div>
+                    <div id="points-control" className="flex flex-row items-center justify-stretch h-[3rem]">
+                        <button onClick={()=>changeSelected(-1)}><ArrowLeftIcon /></button>
+                        <div className="flex-1 text-center">
+                            Coordinate {selectedPoint + 1} <br />
+                            {foundCoords && foundCoords[selectedPoint] &&
+                            <button onClick={()=>{setShowingPics(!showingPics)}}>{foundCoords[selectedPoint].images.length} Images</button>}
+                        </div>
+                        <button onClick={()=>changeSelected(1)}><ArrowRightIcon /></button>
                     </div>
-                    <button onClick={()=>changeSelected(1)}><ArrowRightIcon /></button>
+                    <div id="points-pictures">
+                        {showingPics && <ul className="flex flex-row flex-wrap">
+                            {foundCoords[selectedPoint].images.map((img, num)=><li key={`img${num}`}>
+                                <a onClick={()=>{}}><Image
+                                    className="w-[10rem]"
+                                    src={`${cloudfront}/${img.replace('[SIZE]','thumb')}`}
+                                    alt={`img${num}`}
+                                    width={50}
+                                    height={50}
+                                /></a>
+                            </li>)}
+                        </ul>}
+                    </div>
                 </div>
                 <div>
                     <h3>Places Found</h3>
