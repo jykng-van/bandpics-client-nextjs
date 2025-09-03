@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react"
+import { useContext, useState, useEffect, useRef } from "react"
 import { ImageGroupsContext } from "@/app/events/event_form";
 import { useMap, Map as GMap, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { GetLocations } from "@/app/lib/event_actions";
@@ -16,6 +16,9 @@ export const LocationPicker = ()=>{
     const [showingPics, setShowingPics] = useState<boolean>(false);
 
     const [startingCenter, setStartingCenter] = useState<GmapCoords | null>(null);
+
+    const [previewImg, setPreviewImg] = useState<string | null>(null);
+    const pickerPreview = useRef<HTMLDialogElement>(null);
 
     const cloudfront = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
 
@@ -97,6 +100,34 @@ export const LocationPicker = ()=>{
         setSelectedPoint(index);
         map?.panTo(foundCoords[index].coords);
     }
+    //picker preview
+    const showPreview = (img:string)=>{
+        console.log('showPreview');
+        setPreviewImg(img);
+    }
+    //click outside to close
+    const previewClick = (e:React.MouseEvent<HTMLDialogElement>)=>{
+        const dialog = e.currentTarget;
+        console.log('previewClick', e.target, e.currentTarget);
+        if (dialog){
+            const bounds = dialog.getBoundingClientRect();
+            if (bounds){
+                if (e.clientX < bounds.left || e.clientX > bounds.right || e.clientY < bounds.top || e.clientY > bounds.bottom){
+                    setPreviewImg(null);
+                }
+            }
+        }
+    }
+    useEffect(()=>{
+        const dialog = pickerPreview.current;
+        if (dialog){
+            if (previewImg){
+                dialog.showModal();
+            }else{
+                dialog.close();
+            }
+        }
+    }, [previewImg]);
 
 
     return(
@@ -127,7 +158,7 @@ export const LocationPicker = ()=>{
                     <div id="points-pictures">
                         {showingPics && <ul className="flex flex-row flex-wrap">
                             {foundCoords[selectedPoint].images.map((img, num)=><li key={`img${num}`}>
-                                <a onClick={()=>{}}><Image
+                                <a onClick={()=>{showPreview(img)}}><Image
                                     className="w-[10rem]"
                                     src={`${cloudfront}/${img.replace('[SIZE]','thumb')}`}
                                     alt={`img${num}`}
@@ -136,6 +167,13 @@ export const LocationPicker = ()=>{
                                 /></a>
                             </li>)}
                         </ul>}
+                        {previewImg && <dialog id="picker-img-preview" ref={pickerPreview} onClick={previewClick}
+                        className="fixed bg-white rounded-md shadow-lg backdrop:bg-black/50 backdrop:backdrop-blur-sm m-auto box-border h-[80vh] w-[80vw] box-border">
+                            <figure className="p-5">
+                                <Image src={`${cloudfront}/${previewImg.replace('[SIZE]','fullsize')}`} alt="image preview"
+                                width={500} height={500} className="object-contain w-full h-full" />
+                            </figure>
+                        </dialog>}
                     </div>
                 </div>
                 <div>
