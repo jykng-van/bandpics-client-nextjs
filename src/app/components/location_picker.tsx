@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useRef } from "react"
+import { useContext, useState, useEffect, useRef, ChangeEvent } from "react"
 import { ImageGroupsContext } from "@/app/events/event_form";
 import { useMap, Map as GMap, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { GetLocations } from "@/app/lib/event_actions";
@@ -13,12 +13,12 @@ export const LocationPicker = ()=>{
     const [foundCoords, setFoundCoords] = useState<{images:string[], coords:GmapCoords}[]>([]);
     const [locationResult, setLocationResult] = useState<Location | null>(null);
     const [selectedPoint, setSelectedPoint] = useState<number>(0);
+
     const [showingPics, setShowingPics] = useState<boolean>(false);
-
-    const [startingCenter, setStartingCenter] = useState<GmapCoords | null>(null);
-
     const [previewImg, setPreviewImg] = useState<string | null>(null);
     const pickerPreview = useRef<HTMLDialogElement>(null);
+
+    const [selectedPlace, setSelectedPlace] = useState<number | null>(null);
 
     const cloudfront = process.env.NEXT_PUBLIC_CLOUDFRONT_URL;
 
@@ -60,7 +60,6 @@ export const LocationPicker = ()=>{
         setFoundCoords(sorted_coords);
         console.log('sorted_coords', sorted_coords);
         findLocations(sorted_coords[0].coords);
-        setStartingCenter(sorted_coords[0].coords);
     }, [imageGroups]);
 
     const getSortedCoords = (coords:Map<string, {images:string[]}>)=>{
@@ -100,6 +99,9 @@ export const LocationPicker = ()=>{
         setSelectedPoint(index);
         map?.panTo(foundCoords[index].coords);
     }
+    useEffect(()=>{ //deselect selected place with point change
+        setSelectedPlace(null);
+    }, [selectedPoint]);
     //picker preview
     const showPreview = (img:string)=>{
         console.log('showPreview');
@@ -128,6 +130,10 @@ export const LocationPicker = ()=>{
             }
         }
     }, [previewImg]);
+
+    const selectPlace = (e:ChangeEvent<HTMLInputElement>)=>{
+        setSelectedPlace(parseInt(e.currentTarget.value));
+    }
 
 
     return(
@@ -180,14 +186,18 @@ export const LocationPicker = ()=>{
                     <h3>Places Found</h3>
                     {locationResult && locationResult.places &&
                     <ul>
-                        {locationResult.places.map((loc:LocationPlace)=>(
+                        {locationResult.places.map((loc:LocationPlace, index:number)=>(
                             <li key={loc.name}>
-                                <h4 className="font-bold">{loc.displayName.text}</h4>
-                                <div>{loc.formattedAddress}</div>
-                                <div className="italic">{`${loc.distance.toFixed(1)}m`}</div>
+                                <label className={'block' + (index==selectedPlace ? ' selected bg-blue-100':'')}>
+                                    <strong className="font-bold">{loc.displayName.text}</strong>
+                                    <div>{loc.formattedAddress}</div>
+                                    <div className="italic">{`${loc.distance.toFixed(1)}m`}</div>
+                                    <div className="hidden"><input type="radio" value={index} name="location_option" onChange={selectPlace} /></div>
+                                </label>
                             </li>
                         ))}
                     </ul>}
+                    <button type="button" className="bg-blue-500 text-white py-2 px-5">Next</button>
                 </div>
 
             </section>
