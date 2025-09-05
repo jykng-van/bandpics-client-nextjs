@@ -139,7 +139,7 @@ export const LocationPicker = ()=>{
     return(
         <>
             <div>{foundCoords.length} possible coordinates found</div>
-            <section className="grid grid-cols-[1fr_20rem] grid-rows-[auto_1fr] size-full">
+            <section className="grid grid-cols-[1fr_20rem] grid-rows-[3rem_fit-content(45%)_1fr] size-full">
                 <div className="row-span-full">
                 {foundCoords.length &&
                 <GMap defaultZoom={18} defaultCenter={foundCoords[0].coords} style={{width:'100%', height:'100%'}} mapId={'venue-location'}>
@@ -151,37 +151,36 @@ export const LocationPicker = ()=>{
                     ))}
                 </GMap>}
                 </div>
-                <div>
-                    <div id="points-control" className="flex flex-row items-center justify-stretch h-[3rem]">
-                        <button onClick={()=>changeSelected(-1)}><ArrowLeftIcon /></button>
-                        <div className="flex-1 text-center">
-                            Coordinate {selectedPoint + 1} <br />
-                            {foundCoords && foundCoords[selectedPoint] &&
-                            <button onClick={()=>{setShowingPics(!showingPics)}}>{foundCoords[selectedPoint].images.length} Images</button>}
-                        </div>
-                        <button onClick={()=>changeSelected(1)}><ArrowRightIcon /></button>
+                <div id="points-control" className="flex flex-row items-center justify-stretch h-[3rem]">
+                    <button onClick={()=>changeSelected(-1)}><ArrowLeftIcon /></button>
+                    <div className="flex-1 text-center">
+                        Coordinate {selectedPoint + 1} <br />
+                        {foundCoords && foundCoords[selectedPoint] &&
+                        <button onClick={()=>{setShowingPics(!showingPics)}}>{foundCoords[selectedPoint].images.length} Images</button>}
                     </div>
-                    <div id="points-pictures">
-                        {showingPics && <ul className="flex flex-row flex-wrap">
-                            {foundCoords[selectedPoint].images.map((img, num)=><li key={`img${num}`}>
-                                <a onClick={()=>{showPreview(img)}}><Image
-                                    className="w-[10rem]"
-                                    src={`${cloudfront}/${img.replace('[SIZE]','thumb')}`}
-                                    alt={`img${num}`}
-                                    width={50}
-                                    height={50}
-                                /></a>
-                            </li>)}
-                        </ul>}
-                        {previewImg && <dialog id="picker-img-preview" ref={pickerPreview} onClick={previewClick}
-                        className="fixed bg-white rounded-md shadow-lg backdrop:bg-black/50 backdrop:backdrop-blur-sm m-auto box-border h-[80vh] w-[80vw] box-border">
-                            <figure className="p-5">
-                                <Image src={`${cloudfront}/${previewImg.replace('[SIZE]','fullsize')}`} alt="image preview"
-                                width={500} height={500} className="object-contain w-full h-full" />
-                            </figure>
-                        </dialog>}
-                    </div>
+                    <button onClick={()=>changeSelected(1)}><ArrowRightIcon /></button>
                 </div>
+                <div id="points-pictures" className="overflow-y-auto">
+                    {showingPics && <ul className="flex flex-row flex-wrap">
+                        {foundCoords[selectedPoint].images.map((img, num)=><li key={`img${num}`}>
+                            <a onClick={()=>{showPreview(img)}}><Image
+                                className="w-[10rem]"
+                                src={`${cloudfront}/${img.replace('[SIZE]','thumb')}`}
+                                alt={`img${num}`}
+                                width={50}
+                                height={50}
+                            /></a>
+                        </li>)}
+                    </ul>}
+                    {previewImg && <dialog id="picker-img-preview" ref={pickerPreview} onClick={previewClick}
+                    className="fixed bg-white rounded-md shadow-lg backdrop:bg-black/50 backdrop:backdrop-blur-sm m-auto box-border h-[80vh] w-[80vw] box-border">
+                        <figure className="p-5">
+                            <Image src={`${cloudfront}/${previewImg.replace('[SIZE]','fullsize')}`} alt="image preview"
+                            width={500} height={500} className="object-contain w-full h-full" />
+                        </figure>
+                    </dialog>}
+                </div>
+
                 <div>
                     <h3>Places Found</h3>
                     {locationResult && locationResult.places &&
