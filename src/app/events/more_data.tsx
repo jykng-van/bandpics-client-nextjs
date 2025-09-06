@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { LiveEventContext } from "./event_form";
 import CloseIcon from '@mui/icons-material/Close';
 import { LocationPicker } from "../components/location_picker";
@@ -13,8 +13,11 @@ export const MoreData = (
     //const imageGroups = useContext(ImageGroupsContext);
 
     const moreDialog = useRef<HTMLDialogElement>(null);
-
-    //const [coordList, setCoordList] = useState<GmapCoords[]>([]);
+    enum DataStep {
+        location,
+        concert
+    };
+    const [step, setStep] = useState<DataStep>(DataStep.location);
 
     console.log('more_data liveEvent', liveEvent);
 
@@ -26,19 +29,38 @@ export const MoreData = (
         }
     }, [liveEvent]);
 
+    const moreDataOptions = ()=>{
+        const steps = [
+            {step:DataStep.location, name:'Location/Venue'},
+            {step:DataStep.concert, name:'Concert Event'}
+        ];
+        return steps.map(s=>(<a onClick={()=>{setStep(s.step)}} className={
+            "inline-block pr-5 pl-[1rem] relative h-[1.5rem]"+
+            " after:content=[''] after:absolute after:right-[-1.5rem] after:border-transparent after:border-[.75rem] after:z-1"
+            + (step==s.step ? ' bg-blue-100 after:border-l-blue-100': ' bg-gray-100 after:border-l-gray-100')}>{s.name}</a>))
+    }
+
     if (liveEvent)
     return (
         <dialog id="event-more-data" ref={moreDialog}
         className="bg-white p-4 rounded-md shadow-lg backdrop:bg-black/50 backdrop:backdrop-blur-sm fixed m-auto box-border h-[95vh] w-[95vw] box-border">
             <button className="btn absolute top-2 right-5 bg-sky-300 p-1 rounded-full inline-block" onClick={closeCallback} title="Close"><CloseIcon sx={{ color: 'white' }} /></button>
+            <section className="flex flex-col h-full">
+                <header className="border-b">
+                    <h2 className="text-2xl font-bold">Additional Data</h2>
+                    <div>{liveEvent.name}</div>
+                </header>
+                <nav className="border-b flex flex-row items-center">
+                    {moreDataOptions()}
+                </nav>
+                <div className="flex-1">
+                    {step==DataStep.location && <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}>
+                        <LocationPicker></LocationPicker>
+                    </APIProvider>}
+                    {step==DataStep.concert && <div>Concert stuff</div>}
+                </div>
 
-            <h2 className="text-2xl font-bold">Additional Data</h2>
-            <div>For {liveEvent.name}</div>
-
-            <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}>
-                <LocationPicker></LocationPicker>
-            </APIProvider>
-
+            </section>
         </dialog>
     )
 }

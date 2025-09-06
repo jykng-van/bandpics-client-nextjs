@@ -138,7 +138,6 @@ export const LocationPicker = ()=>{
 
     return(
         <>
-            <div>{foundCoords.length} possible coordinates found</div>
             <section className="grid grid-cols-[1fr_20rem] grid-rows-[3rem_fit-content(45%)_1fr] size-full">
                 <div className="row-span-full">
                 {foundCoords.length &&
@@ -154,7 +153,7 @@ export const LocationPicker = ()=>{
                 <div id="points-control" className="flex flex-row items-center justify-stretch h-[3rem]">
                     <button onClick={()=>changeSelected(-1)}><ArrowLeftIcon /></button>
                     <div className="flex-1 text-center">
-                        Coordinate {selectedPoint + 1} <br />
+                        Coordinate {selectedPoint + 1} of {foundCoords.length} <br />
                         {foundCoords && foundCoords[selectedPoint] &&
                         <button onClick={()=>{setShowingPics(!showingPics)}}>{foundCoords[selectedPoint].images.length} Images</button>}
                     </div>
