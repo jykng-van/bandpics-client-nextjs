@@ -36,8 +36,15 @@ export const MoreData = (
         ];
         return steps.map(s=>(<a onClick={()=>{setStep(s.step)}} className={
             "inline-block pr-5 pl-[1rem] relative h-[1.5rem]"+
-            " after:content=[''] after:absolute after:right-[-1.5rem] after:border-transparent after:border-[.75rem] after:z-1"
-            + (step==s.step ? ' bg-blue-100 after:border-l-blue-100': ' bg-gray-100 after:border-l-gray-100')}>{s.name}</a>))
+            " after:absolute after:right-[-1.5rem] after:border-transparent after:border-[.75rem] after:z-1"
+            + (step==s.step ? ' bg-blue-100 after:border-l-blue-100': ' bg-gray-200 after:border-l-gray-200')}>{s.name}</a>))
+    }
+    const nextStepCallback = ()=>{
+        if (step < Object.keys(DataStep).length-1){
+            setStep(step+1);
+        }else{
+            closeCallback();
+        }
     }
 
     if (liveEvent)
@@ -55,7 +62,7 @@ export const MoreData = (
                 </nav>
                 <div className="flex-1">
                     {step==DataStep.location && <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}>
-                        <LocationPicker></LocationPicker>
+                        <LocationPicker saveCallback={nextStepCallback}></LocationPicker>
                     </APIProvider>}
                     {step==DataStep.concert && <div>Concert stuff</div>}
                 </div>

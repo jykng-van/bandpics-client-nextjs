@@ -1,14 +1,18 @@
 import { useContext, useState, useEffect, useRef, ChangeEvent } from "react"
-import { ImageGroupsContext } from "@/app/events/event_form";
+import { ImageGroupsContext, LiveEventContext } from "@/app/events/event_form";
 import { useMap, Map as GMap, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
-import { GetLocations } from "@/app/lib/event_actions";
+import { GetLocations, SaveAdditionalData } from "@/app/lib/event_actions";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import Image from "next/image";
 
 
-export const LocationPicker = ()=>{
+
+export const LocationPicker = (
+    {saveCallback}:{saveCallback:()=>void}
+)=>{
     const imageGroups = useContext(ImageGroupsContext);
+    const liveEvent = useContext(LiveEventContext);
 
     const [foundCoords, setFoundCoords] = useState<{images:string[], coords:GmapCoords}[]>([]);
     const [locationResult, setLocationResult] = useState<Location | null>(null);
@@ -134,6 +138,46 @@ export const LocationPicker = ()=>{
     const selectPlace = (e:ChangeEvent<HTMLInputElement>)=>{
         setSelectedPlace(parseInt(e.currentTarget.value));
     }
+    const savePlaceLocation = async ()=>{
+        console.log('savePlaceLocation', selectedPlace);
+        if (selectedPlace!==null && liveEvent){
+            const place= locationResult?.places[selectedPlace];
+            console.log('place', place);
+            if (place){
+                let address:string;
+                if (place.formattedAddress){
+                    address = place.formattedAddress;
+                }else{
+                    const find_parts = ['locality','administrative_area_level_1','country'];
+                    address = place.addressComponents.reduce((accumulator: string, part_type:AddressComponent) => {
+                        if (part_type.types.some((type: string) => find_parts.includes(type))) {
+                            if (accumulator.length === 0) {
+                                return part_type.longText;
+                            } else {
+                                return `${accumulator}, ${part_type.longText}`;
+                            }
+                        }
+                        return accumulator;
+                    }, "");
+
+                }
+                console.log(address);
+                const place_data = {
+                    location:{
+                        place_id:place.name,
+                        full_address:place.formattedAddress,
+                        name:place.displayName.text,
+                        location:place.location
+                    }
+                };
+                SaveAdditionalData(liveEvent.id, place_data).then(async (event_data) => {
+                    console.log('Event data:', event_data);
+                    saveCallback();
+                })
+            }
+
+        }
+    }
 
 
     return(
@@ -195,7 +239,7 @@ export const LocationPicker = ()=>{
                             </li>
                         ))}
                     </ul>}
-                    <button type="button" className="bg-blue-500 text-white py-2 px-5">Next</button>
+                    <button type="button" className="bg-blue-500 text-white py-2 px-5" onClick={savePlaceLocation}>Next</button>
                 </div>
 
             </section>

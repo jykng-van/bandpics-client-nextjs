@@ -62,6 +62,47 @@ export const UpdateLiveEvent = async (formData: FormData, event?: LiveEvent)=>{
     }
 
 }
+export const SaveAdditionalData = async (eventId:string, data:object)=>{
+    const session = await auth();
+    console.log('SaveAdditionalData session', session);
+    if (!session){
+        console.log("Not logged in, can't refresh!");
+    }
+    console.log('SaveAdditionalData', eventId, data);
+
+    //data to send
+    const additional_data = {
+        event:data
+    };
+    console.log('additional_data', JSON.stringify(additional_data));
+
+    const url = `${event_api}/events/${eventId}`;
+    console.log('url', url);
+    console.log('Authorization', `Bearer ${session?.user.accessToken}`);
+
+    const response = await fetch(
+        url,
+        {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session?.user.accessToken}`,
+            },
+            next:{
+                tags:['event']
+            },
+            body: JSON.stringify(additional_data),
+        }
+    )
+    const result = await response.json();
+    console.log(result);
+    if (response.ok){
+        return result;
+    }else{
+        const error = new HttpError(response.statusText, response.status);
+        return error;
+    }
+}
 export const GetAllLiveEvents = async ()=>{
     return fetch(`${event_api}/events`, {
         next:{

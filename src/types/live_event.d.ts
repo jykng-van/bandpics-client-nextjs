@@ -5,9 +5,15 @@ interface LiveEvent{
     created_at: string;
     updated_at: string;
     event_date?: string;
-    location: object;
+    location: LiveEventLocation;
     data: object;
     groups?: ImageGroup[];
+}
+interface LiveEventLocation{
+    place_id:string;
+    full_address:string;
+    name:string;
+    location:Coords;
 }
 
 interface Location{
@@ -18,11 +24,17 @@ interface Location{
     search_type:string;
 }
 interface LocationPlace{
-    addressComponents:object[];
+    addressComponents:AddressComponent[];
     displayName:{text:string, languageCode:string};
     distance:number;
     formattedAddress:string;
-    location:{latitude:number, longitude:number};
+    location:Coords;
     name:string;
+    types:string[];
+}
+interface AddressComponent{
+    longText:string;
+    shortText:string;
+    languageCode:string;
     types:string[];
 }

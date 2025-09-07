@@ -29,6 +29,10 @@ const EventPage = async ({
       <Suspense fallback={<Loading />}>
         <h1 className="font-bold text-2xl">{live_event?.name}</h1>
         {live_event?.event_date && <time className="italic" dateTime={live_event.event_date}>{moment(live_event.event_date, 'YYYY-MM-DD').format('MMMM D, YYYY')}</time>}
+        {live_event?.location && <div id="live-event-place">
+          <strong>{live_event.location.name}</strong><br />
+          <em>{live_event.location.full_address}</em>
+        </div>}
         {live_event?.description &&
           <p>{live_event.description}</p>
         }

@@ -104,11 +104,11 @@ export const config = {
                     };
                 } else {
                     console.error("Error with refresh token request", res);
-                    return { ...token, error: "RefreshTokenError" };
+                    return {redirect:'/api/auth/signin'};
                 }
             } catch (err) {
                 console.error("Error refreshing token", err);
-                return { ...token, error: "RefreshTokenError" };
+                return {redirect:'/api/auth/signin'};
             }
         }
     }
