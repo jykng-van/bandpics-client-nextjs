@@ -34,7 +34,7 @@ export const MoreData = (
             {step:DataStep.location, name:'Location/Venue'},
             {step:DataStep.concert, name:'Concert Event'}
         ];
-        return steps.map(s=>(<a onClick={()=>{setStep(s.step)}} className={
+        return steps.map(s=>(<a onClick={()=>{setStep(s.step)}} key={`link${s.step}`} className={
             "inline-block pr-5 pl-[1rem] relative h-[1.5rem]"+
             " after:absolute after:right-[-1.5rem] after:border-transparent after:border-[.75rem] after:z-1"
             + (step==s.step ? ' bg-blue-100 after:border-l-blue-100': ' bg-gray-200 after:border-l-gray-200')}>{s.name}</a>))

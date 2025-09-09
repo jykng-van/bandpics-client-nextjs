@@ -87,6 +87,9 @@ export const LocationPicker = (
     const findLocations = async(coords:GmapCoords, searchType:number = 1, radius:number = 50.0)=>{
         const locations_results = await GetLocations(coords, searchType, radius);
         console.log('findLocations', locations_results);
+        if (liveEvent?.location?.place_id && locations_results.places){
+            setSelectedPlace(locations_results.places.findIndex((p:LocationPlace)=>p.name == liveEvent.location.place_id));
+        }
         setLocationResult(locations_results);
     }
     const changeSelected = (inc:number)=>{
